@@ -1,1 +1,1 @@
-# Thesis_livestock_monitoring backend 
+# Thesis_livestock_monitoring gateway 
