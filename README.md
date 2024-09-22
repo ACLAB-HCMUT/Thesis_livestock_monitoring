@@ -1,1 +1,1 @@
-# Thesis_livestock_monitoring gateway 
+# Thesis_livestock_monitoring end devices 
