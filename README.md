@@ -1,1 +1,1 @@
-# Thesis_livestock_monitoring end devices 
+# Thesis_livestock_monitoring frontend 
