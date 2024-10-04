@@ -3,10 +3,10 @@ import bodyParser from "body-parser";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-import { mqttClient } from "./src/controllers/mqtt_controller.js";
+import { mqttClient } from "./src/controllers/mqttController.js";
 import userRouter from "./src/routes/userRouter.js";
 import cowRouter from "./src/routes/cowRouter.js";
-import { createCowLocation } from "./src/services/cowLocationService.js";
+import cowLocationRouter from "./src/routes/cowLocationRouter.js";
 
 dotenv.config();
 
@@ -27,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use("/user", userRouter);
 app.use("/cow", cowRouter);
+app.use("/cow_location", cowLocationRouter);
 
 mongoose.connect(
   process.env.MONGO_DB_URI)
