@@ -1,5 +1,5 @@
 import { Point } from '@influxdata/influxdb-client'
-import { cowQueryApi, cowWriteApi } from "../controllers/influxdb_controller.js";
+import { cowQueryApi, cowWriteApi } from "../controllers/influxdbController.js";
 
 
 const measurement = "cow_state";
@@ -10,7 +10,7 @@ const measurement = "cow_state";
  * @param {string} username username of user
  * @param {number} state state of cow
  */
-export const createCowState = async (cow_addr, username, state) => {
+const createCowState = async (cow_addr, username, state) => {
     const point = new Point(measurement)
         .tag('cow_addr', cow_addr)
         .tag('username', username)
@@ -26,7 +26,7 @@ export const createCowState = async (cow_addr, username, state) => {
  * @param {number} cow_addr Address of lora node which is assigned in the cow
  * @returns {string} state of cow
  */
-export const getLatestCowState = async (username, cow_addr) => {
+const getLatestCowState = async (username, cow_addr) => {
     const fluxQuery = 
         `from(bucket:"${bucket}") 
             |> range(start: -1h) 
@@ -41,4 +41,9 @@ export const getLatestCowState = async (username, cow_addr) => {
         return o._value;
     }
     return undefined;
+}
+
+export default {
+    createCowState,
+    getLatestCowState
 }
