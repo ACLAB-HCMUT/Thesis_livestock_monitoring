@@ -1,6 +1,6 @@
 import mqtt from "mqtt";
-import { createCowLocation } from "../services/cowLocationService.js";
-import { createCowState } from "../services/cowStateService.js";
+import cowLocationService from "../services/cowLocationService.js";
+import cowStateService from "../services/cowStateService.js";
 
 const handle_mqtt_msg = async (topic, msg) => {
     let json_obj = JSON.parse(msg);
@@ -13,14 +13,16 @@ const handle_mqtt_msg = async (topic, msg) => {
             let longitude = json_obj.longitude;
             let latitude = json_obj.latitude;
 
-            await createCowLocation(cow_addr, topic, latitude, longitude);
+            const newCowLocation = 
+                await cowLocationService.createCowLocation(cow_addr, topic, latitude, longitude);
+            console.log(newCowLocation);
             break;
         case 1:
             /* Cow state */
             cow_addr = json_obj.address;
             state = json_obj.state;
 
-            await createCowState(cow_addr, topic, state);
+            await cowStateService.createCowState(cow_addr, topic, state);
             break;
         default:
             console.log("Opcode invalid");

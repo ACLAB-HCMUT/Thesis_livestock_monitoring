@@ -14,3 +14,4 @@ const bucket = "cow"
 
 export const cowWriteApi = influxDB.getWriteApi(org, bucket);
 export const cowQueryApi = influxDB.getQueryApi(org);
+
