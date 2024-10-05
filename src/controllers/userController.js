@@ -11,7 +11,7 @@ const postUser = async (req, res) => {
 
 const getUserByUsername = async (req, res) => {
     try{
-        const username = req.params.username;
+        const username = req.header('username');
         const user = await userService.getUserByUsername(username);
         return res.status(200).json(user);
     }catch(err){

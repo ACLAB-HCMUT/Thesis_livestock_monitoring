@@ -4,6 +4,6 @@ import userController from "../controllers/userController.js";
 let router = express.Router();
 
 router.post('/', userController.postUser);
-router.get('/:username', userController.getUserByUsername);
+router.get('/', userController.getUserByUsername);
 
 export default router;

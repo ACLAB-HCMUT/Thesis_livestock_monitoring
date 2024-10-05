@@ -16,8 +16,8 @@ const postCowLocation = async (req, res) => {
 
 const getLatestCowLocation = async (req, res) => {
     try {
-        const username = req.body.username;
-        const cow_addr = req.body.cow_addr;
+        const username = req.header('username');
+        const cow_addr = req.header('cow_addr');
         const latestCowLocation = 
             await cowLocationService.getLatestCowLocation(username, cow_addr);
         return res.status(200).json(latestCowLocation);
@@ -28,9 +28,9 @@ const getLatestCowLocation = async (req, res) => {
 
 const getCowLocationInDate = async (req, res) => {
     try {
-        const username = req.body.username;
-        const cow_addr = req.body.cow_addr;
-        const date = req.body.date;
+        const username = req.header('username');
+        const cow_addr = req.header('cow_addr');
+        const date = req.header('date');
 
         const cowLocationInDate = 
             await cowLocationService.getCowLocationInDate(username, cow_addr, date);
@@ -42,8 +42,8 @@ const getCowLocationInDate = async (req, res) => {
 
 const deleteCowLocationByUsernameCowAddr = async (req, res) => {
     try {
-        const username = req.body.username;
-        const cow_addr = req.body.cow_addr;
+        const username = req.header('username');
+        const cow_addr = req.header('cow_addr');
         await cowLocationService.deleteCowLocationByUsernameCowAddr(username, cow_addr);
         return res.status(200).json({"message": "Delete success"});
     }catch(err){
@@ -53,7 +53,7 @@ const deleteCowLocationByUsernameCowAddr = async (req, res) => {
 
 const deleteCowLocationByUsername = async (req, res) => {
     try {
-        const username = req.body.username;
+        const username = req.header('username');
         await cowLocationService.deleteCowLocationByUsername(username);
         return res.status(200).json({"message": "Delete success"});
     }catch(err){
