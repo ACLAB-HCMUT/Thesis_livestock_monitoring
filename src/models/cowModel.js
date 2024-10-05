@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 const cowSchema = new mongoose.Schema({
-    lora_address: {
+    cow_addr: {
         type: Number,
     },
     name: {

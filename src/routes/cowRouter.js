@@ -5,12 +5,12 @@ let router = express.Router();
 
 router.post('/', cowController.postCow);
 
-router.get('/username/:username', cowController.getCowByUsername);
-router.get('/id/:cowId', cowController.getCowById);
+router.get('/username', cowController.getCowByUsername);
+router.get('/id', cowController.getCowById);
 
-router.delete('/id/:cowId', cowController.deleteCowById);
-router.delete('/username/:username', cowController.deleteCowByUsername);
+router.delete('/id', cowController.deleteCowById);
+router.delete('/username', cowController.deleteCowByUsername);
 
-router.put('/id/:cowId', cowController.updateCowById);
+router.put('/id', cowController.updateCowById);
 
 export default router;

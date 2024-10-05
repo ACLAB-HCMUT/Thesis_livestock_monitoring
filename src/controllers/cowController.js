@@ -2,7 +2,7 @@ import cowService from "../services/cowService.js"
 
 const getCowByUsername = async (req, res) => {
     try {
-        const username = req.params.username;
+        const username = req.header('username');
         const cows = await cowService.getCowByUsername(username);
         return res.status(200).json(cows);
     }catch(err){
@@ -12,7 +12,7 @@ const getCowByUsername = async (req, res) => {
 
 const getCowById = async (req, res) => {
     try {
-        const cowId = req.params.cowId;
+        const cowId = req.header('cowId');
         const cow = await cowService.getCowById(cowId);
         return res.status(200).json(cow);
     }catch(err){
@@ -31,7 +31,7 @@ const postCow = async (req, res) => {
 
 const deleteCowById = async (req, res) => {
     try{
-        const cowId = req.params.cowId;
+        const cowId = req.header('cowId');
         await cowService.deleteCowById(cowId);
         return res.status(200).json({message: "Delete success"});
     }catch(err){
@@ -41,7 +41,7 @@ const deleteCowById = async (req, res) => {
 
 const deleteCowByUsername = async (req, res) => {
     try{
-        const username = req.params.username;
+        const username = req.header('username');
         await cowService.deleteCowByUsername(username);
         return res.status(200).json({message: "Delete success"});
     }catch(err){
@@ -51,7 +51,7 @@ const deleteCowByUsername = async (req, res) => {
 
 const updateCowById = async (req, res) => {
     try{
-        const cowId = req.params.cowId;
+        const cowId = req.header('cowId');
         const updatedCow = await cowService.updateCowById(cowId, req.body);
         return res.status(200).json(updatedCow);
     }catch(err){
