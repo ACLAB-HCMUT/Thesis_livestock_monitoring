@@ -10,20 +10,23 @@ router.post('/', cowLocationController.postCowLocation);
 
 
 /* ----------------- Get --------------- */
-/* Get latest cow's location by username and cow address */
-router.get('/latest', cowLocationController.getLatestCowLocation);
+/* Get all cow's location by username */
+router.get('/username', cowLocationController.getCowLocationsByUsername);
+
+/* Get all cow's location by username and cow address */
+router.get('/cow_addr', cowLocationController.getCowLocationsByUsernameAndCowAddr);
 
 /* Get all cow's location by username and cow address in the date */
-router.get('/date', cowLocationController.getCowLocationInDate);
+router.get('/date', cowLocationController.getCowLocationsInDate);
 /* -------------------------------------- */
 
 
 /* ----------------- Delete ------------- */
 /* Delete all data of cow's location by username and cow address */
-router.delete('/cow_addr', cowLocationController.deleteCowLocationByUsernameCowAddr);
+router.delete('/cow_addr', cowLocationController.deleteCowLocationsByUsernameAndCowAddr);
 
 /* Delete all data of cow's location by username */
-router.delete('/username', cowLocationController.deleteCowLocationByUsername);
+router.delete('/username', cowLocationController.deleteCowLocationsByUsername);
 /* -------------------------------------- */
 
 export default router;
