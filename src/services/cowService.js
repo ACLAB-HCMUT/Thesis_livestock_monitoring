@@ -36,6 +36,19 @@ const updateCowById = async (cowId, cow) => {
     return updatedCow;
 }
 
+const updateLatestLocationById = async (cowId, longitude, latitude) => {
+    const updatedCow = await CowModel.findById(cowId);
+    if(updatedCow) {        
+        updatedCow.latest_longitude = longitude;
+        updatedCow.latest_latitude = latitude;
+        updatedCow.timestamp = Date.now();
+
+        await updatedCow.save();
+        return updatedCow;
+    }else{
+        return undefined;
+    }
+}
 
 
 export default {
@@ -45,4 +58,5 @@ export default {
     deleteCowById,
     deleteCowByUsername,
     updateCowById,
+    updateLatestLocationById,
 }

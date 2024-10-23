@@ -12,5 +12,6 @@ router.delete('/id', cowController.deleteCowById);
 router.delete('/username', cowController.deleteCowByUsername);
 
 router.put('/id', cowController.updateCowById);
+router.put('/latest_location', cowController.updateLatestLocationById);
 
 export default router;

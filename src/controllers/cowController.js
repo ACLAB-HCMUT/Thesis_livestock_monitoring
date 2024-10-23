@@ -59,6 +59,19 @@ const updateCowById = async (req, res) => {
     }
 }
 
+const updateLatestLocationById = async (req, res) => {
+    try{
+        const cowId = req.header('cowId');
+
+        const longitude = req.body['longitude'];
+        const latitude = req.body['latitude'];
+        const updatedCow = await cowService.updateLatestLocationById(cowId, longitude, latitude);
+        return res.status(200).json(updatedCow);
+    }catch(err) {
+        return res.status(500).json(err);
+    }
+}
+
 export default {
     getCowByUsername,
     getCowById,
@@ -66,4 +79,5 @@ export default {
     deleteCowById,
     deleteCowByUsername,
     updateCowById,
+    updateLatestLocationById,
 }
