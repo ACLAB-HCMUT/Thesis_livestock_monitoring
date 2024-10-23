@@ -10,16 +10,6 @@ import cowLocationRouter from "./src/routes/cowLocationRouter.js";
 
 dotenv.config();
 
-// createCowLocation(new CowLocation(77, "than", 11.88, 107.8));
-
-// getLatestCowLocation("thn", 33)
-//   .then((data) => {
-//     console.log("Latest record:", data);
-//   })
-//   .catch((error) => {
-//     console.error("Error:", error);
-// });
-
 const app = express();
 
 app.use(bodyParser.json());
