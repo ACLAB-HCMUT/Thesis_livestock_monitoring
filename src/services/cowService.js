@@ -19,6 +19,14 @@ const getCowByUsername = async (username) => {
     return cows;
 }
 
+const getCowByUsernameAndCowAddr = async (username, cow_addr) => {
+    const cow = await CowModel.findOne({
+        username: username,
+        cow_addr: cow_addr
+    });
+    return cow;
+}
+
 const deleteCowById = async (cowId) => {
     await CowModel.deleteOne({_id: cowId});
 }
@@ -55,6 +63,7 @@ export default {
     createCow,
     getCowById,
     getCowByUsername,
+    getCowByUsernameAndCowAddr,
     deleteCowById,
     deleteCowByUsername,
     updateCowById,

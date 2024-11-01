@@ -2,7 +2,7 @@ import cowService from "../services/cowService.js"
 
 const getCowByUsername = async (req, res) => {
     try {
-        const username = req.header('username');
+        const username = req.params['username'];
         const cows = await cowService.getCowByUsername(username);
         return res.status(200).json(cows);
     }catch(err){
@@ -12,8 +12,8 @@ const getCowByUsername = async (req, res) => {
 
 const getCowById = async (req, res) => {
     try {
-        const cowId = req.header('cowId');
-        const cow = await cowService.getCowById(cowId);
+        const cow_id = req.params['cow_id'];
+        const cow = await cowService.getCowById(cow_id);
         return res.status(200).json(cow);
     }catch(err){
         return res.status(500).json(err);
@@ -31,8 +31,8 @@ const postCow = async (req, res) => {
 
 const deleteCowById = async (req, res) => {
     try{
-        const cowId = req.header('cowId');
-        await cowService.deleteCowById(cowId);
+        const cow_id = req.params['cow_id'];
+        await cowService.deleteCowById(cow_id);
         return res.status(200).json({message: "Delete success"});
     }catch(err){
         return res.status(500).json(err);
@@ -41,7 +41,7 @@ const deleteCowById = async (req, res) => {
 
 const deleteCowByUsername = async (req, res) => {
     try{
-        const username = req.header('username');
+        const username = req.params['username'];
         await cowService.deleteCowByUsername(username);
         return res.status(200).json({message: "Delete success"});
     }catch(err){
@@ -51,26 +51,21 @@ const deleteCowByUsername = async (req, res) => {
 
 const updateCowById = async (req, res) => {
     try{
-        const cowId = req.header('cowId');
-        const updatedCow = await cowService.updateCowById(cowId, req.body);
-        return res.status(200).json(updatedCow);
+        const cow_id = req.params['cow_id'];
+        const latest_latitude = req.body['latest_latitude'];
+        const latest_longitude = req.body['latest_longitude'];
+        if(latest_longitude || latest_latitude){
+            const updatedCow = await cowService.updateLatestLocationById(cow_id, latest_longitude, latest_latitude);
+            return res.status(200).json(updatedCow);
+        }else{
+            const updatedCow = await cowService.updateCowById(cow_id, req.body);
+            return res.status(200).json(updatedCow);
+        }
     }catch(err){
         return res.status(500).json(err);
     }
 }
 
-const updateLatestLocationById = async (req, res) => {
-    try{
-        const cowId = req.header('cowId');
-
-        const longitude = req.body['longitude'];
-        const latitude = req.body['latitude'];
-        const updatedCow = await cowService.updateLatestLocationById(cowId, longitude, latitude);
-        return res.status(200).json(updatedCow);
-    }catch(err) {
-        return res.status(500).json(err);
-    }
-}
 
 export default {
     getCowByUsername,
@@ -79,5 +74,4 @@ export default {
     deleteCowById,
     deleteCowByUsername,
     updateCowById,
-    updateLatestLocationById,
 }
