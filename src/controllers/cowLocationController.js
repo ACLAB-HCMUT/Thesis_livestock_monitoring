@@ -2,93 +2,71 @@ import cowLocationService from "../services/cowLocationService.js";
 
 const postCowLocation = async (req, res) => {
     try {
-        const username = req.body.username;
-        const cow_addr = req.body.cow_addr;
-        const latitude = req.body.latitude;
-        const longitude = req.body.longitude;
-        const timestamp = req.body.timestamp;
-        const newCowLocation = 
-            await cowLocationService.createCowLocation(cow_addr, username, latitude, longitude, timestamp);
-        return res.status(200).json(newCowLocation);
+        const cow_id = req.body['cow_id'];
+        const longitude = req.body['longitude'];
+        const latitude = req.body['latitude'];
+        const new_cow_location = 
+            await cowLocationService.createCowLocation(cow_id, longitude, latitude);
+        return res.status(200).json(new_cow_location);
     }catch(err){
         return res.status(500).json(err);
     }
 }
 
-const getCowLocationsByUsername = async (req, res) => {
-    try{
-        const username = req.header('username');
-        const cowLocations = await cowLocationService.getCowLocationsByUsername(username);
-        return res.status(200).json(cowLocations);
-    }catch(err){
-        return res.status(500).json(err);
-    }
-}
-const getCowLocationsByUsernameAndCowAddr = async (req, res) => {
-    try{
-        const username = req.header('username');
-        const cow_addr = req.header('cow_addr');
 
-        const cowLocations = 
-            await cowLocationService.getCowLocationsByUsernameAndCowAddr(username, cow_addr);
-
-        return res.status(200).json(cowLocations);
-    }catch(err){
-        return res.status(500).json(err);
-    }
-}
-
-const getCowLocationsInDate = async (req, res) => {
+const getCowLocationsByCowId = async (req, res) => {
     try {
-        const username = req.header('username');
-        const cow_addr = req.header('cow_addr');
-        const start_date = req.header('start_date');
-        const end_date = req.header('end_date');
+        const cow_id = req.params['cow_id'];
 
-        const cowLocationInDate = 
-            await cowLocationService.getCowLocationInDate(username, cow_addr, start_date, end_date);
-        return res.status(200).json(cowLocationInDate);
+        const cow_locations = 
+            await cowLocationService.getCowLocationsByCowId(cow_id);
+        return res.status(200).json(cow_locations);
     }catch(err){
         return res.status(500).json(err);
     }
 }
 
-
-const deleteCowLocationsByUsernameAndCowAddr = async (req, res) => {
+const getCowLocationsByDate = async (req, res) => {
     try {
-        const username = req.header('username');
-        const cow_addr = req.header('cow_addr');
-        await cowLocationService.deleteCowLocationsByUsernameAndCowAddr(username, cow_addr);
+        const cow_id = req.params['cow_id'];
+        const start_date = req.params['start_date'];
+        const end_date = req.params['end_date'];
+        const cow_locations = 
+            await cowLocationService.getCowLocationsByDate(cow_id, start_date, end_date);
+        return res.status(200).json(cow_locations);
+    }catch(err){
+        return res.status(500).json(err);
+    }
+}
+
+const deleteCowLocationById = async (req, res) => {
+    try{
+        const cow_location_id = req.params['cow_location_id'];
+
+        await cowLocationService.deleteCowLocationById(cow_location_id);
         return res.status(200).json({"message": "Delete success"});
     }catch(err){
         return res.status(500).json(err);
     }
 }
 
-const deleteCowLocationsByUsername = async (req, res) => {
-    try {
-        const username = req.header('username');
-        await cowLocationService.deleteCowLocationsByUsername(username);
+const deleteCowLocationsByCowId = async (req, res) => {
+    try{
+        const cow_id = req.params['cow_id'];
+        await cowLocationService.deleteCowLocationsByCowId(cow_id);
         return res.status(200).json({"message": "Delete success"});
     }catch(err){
         return res.status(500).json(err);
     }
 }
-
-
-
-
-
-
 
 export default {
     postCowLocation,
 
-    getCowLocationsByUsername,
-    getCowLocationsByUsernameAndCowAddr,
-    getCowLocationsInDate,
+    getCowLocationsByCowId,
+    getCowLocationsByDate,
 
-    deleteCowLocationsByUsernameAndCowAddr,
-    deleteCowLocationsByUsername,
+    deleteCowLocationsByCowId,
+    deleteCowLocationById,
 
 }

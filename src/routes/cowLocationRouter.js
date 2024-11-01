@@ -4,29 +4,25 @@ import cowLocationController from "../controllers/cowLocationController.js";
 let router = express.Router();
 
 /* ---------------- Post ----------------*/
-/* Create new cow's location by username and cow address */
+/* Create new cow's location */
 router.post('/', cowLocationController.postCowLocation);
 /* --------------------------------------*/
 
 
 /* ----------------- Get --------------- */
-/* Get all cow's location by username */
-router.get('/username', cowLocationController.getCowLocationsByUsername);
-
-/* Get all cow's location by username and cow address */
-router.get('/cow_addr', cowLocationController.getCowLocationsByUsernameAndCowAddr);
-
-/* Get all cow's location by username and cow address in the date */
-router.get('/date', cowLocationController.getCowLocationsInDate);
+/* Get cow's locations by cow_id */
+router.get('/cow_id/:cow_id', cowLocationController.getCowLocationsByCowId);
+/* Get cow's location by date */
+router.get('/cow_id/:cow_id/:start_date/:end_date', cowLocationController.getCowLocationsByDate);
 /* -------------------------------------- */
 
 
 /* ----------------- Delete ------------- */
-/* Delete all data of cow's location by username and cow address */
-router.delete('/cow_addr', cowLocationController.deleteCowLocationsByUsernameAndCowAddr);
+/* Delete cow's location by id */
+router.delete('/:cow_location_id', cowLocationController.deleteCowLocationById);
 
-/* Delete all data of cow's location by username */
-router.delete('/username', cowLocationController.deleteCowLocationsByUsername);
+/* Delete cow's locations by cow_id */
+router.delete('/cow_id/:cow_id', cowLocationController.deleteCowLocationsByCowId);
 /* -------------------------------------- */
 
 export default router;
