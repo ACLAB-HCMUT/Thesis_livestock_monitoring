@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1034239363361",
+    "project_id": "thesis-livestock-monitoring",
+    "storage_bucket": "thesis-livestock-monitoring.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034239363361:android:227477b5f13aca2ae39660",
+        "android_client_info": {
+          "package_name": "com.example.do_an_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKETaB5VeZ40zfXmOA6i2W_CDm1xVF8bA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

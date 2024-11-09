@@ -1,17 +1,31 @@
 import 'dart:convert';
-
 import 'package:do_an_app/global.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:http/http.dart' as http;
 
-
-Future<CowModel?> postCow(CowModel cowModel) async {
+Future<CowModel?> postCow(
+  int? cow_addr,
+  String? name, 
+  int? age, 
+  int? weight,
+  bool? isMale
+) async {
   try{
     var url = Uri.http(serverUrl, '/cow');
-    var body = cowModel.toJson();
+    var body = {
+      if (cow_addr != null) 'cow_addr' : cow_addr,
+      if (name != null) 'name': name,
+      if (age != null) 'age': age,
+      if (weight != null) 'weight': weight,
+      if (isMale != null) 'sex': isMale,
+    };
     var res = await http.post(
       url,
-      body: body);
+      body: jsonEncode(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
     if(res.statusCode == 200){
       var bodyJson = jsonDecode(res.body);
       return CowModel.fromJson(bodyJson);
@@ -24,15 +38,56 @@ Future<CowModel?> postCow(CowModel cowModel) async {
     return null;
   }
 }
+Future<CowModel?> updateCowById(
+  String cowId,
+  String? name,
+  int? age,
+  double? weight,
+  bool? isMale,
+  bool? isSick,
+  bool? isPregnant,
+  bool? isMedicated
+) async {
+  try {
+    var url = Uri.http(serverUrl, '/cow/$cowId');
+    print(cowId);
+    // Build a map with only the non-null fields
+    var body = {
+      if (name != null) 'name': name,
+      if (age != null) 'age': age,
+      if (weight != null) 'weight': weight,
+      if (isMale != null) 'sex': isMale,
+      if (isSick != null) 'sick': isSick,
+      if (isPregnant != null) 'pregnant': isPregnant,
+      if (isMedicated != null) 'medicated' :isMedicated,
+    };
+    var res = await http.put(
+      url,
+      body: jsonEncode(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (res.statusCode == 200) {
+      var bodyJson = jsonDecode(res.body);
+      return CowModel.fromJson(bodyJson);
+    } else {
+      print("updateCow failed, status code: ${res.statusCode}");
+      return null;
+    }
+  } catch (err) {
+    print("updateCow failed, error: $err");
+    return null;
+  }
+}
+
 
 Future<CowModel?> getCowById(String cowId) async {
   try{
     var url = Uri.http(serverUrl, '/cow/$cowId');
-
     var res = await http.get(
       url
     );
-    
     if(res.statusCode == 200){
       var bodyJson = jsonDecode(res.body);
       return CowModel.fromJson(bodyJson);
@@ -45,6 +100,31 @@ Future<CowModel?> getCowById(String cowId) async {
     return null;
   }
 }
+Future<List<CowModel>?> getAllCow() async {
+  try{
+    var url = Uri.http(serverUrl, '/cow/api/all');
+
+    var res = await http.get(
+      url
+    );
+    
+    if(res.statusCode == 200){
+      List<dynamic> cowModelJsons = json.decode(res.body);
+      List<CowModel> cowModels = [];
+      for(final cowModelJson in cowModelJsons){
+        cowModels.add(CowModel.fromJson(cowModelJson));
+      }
+      
+      return cowModels;
+    }else {
+      print("getAllCow failed, status code: ${res.statusCode}");
+      return null;
+    }
+  }catch(err){
+    print("getAllCow failed, error: $err");
+    return null;
+  }
+}
 
 Future<List<CowModel>?> getAllCowByUsername(String username) async {
   try{
@@ -53,8 +133,6 @@ Future<List<CowModel>?> getAllCowByUsername(String username) async {
     var res = await http.get(
       url
     );
-
-
     if(res.statusCode == 200) {
       List<dynamic> cowModelJsons = json.decode(res.body);
       
