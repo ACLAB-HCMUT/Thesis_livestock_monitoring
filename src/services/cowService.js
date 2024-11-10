@@ -5,7 +5,32 @@ const createCow = async (req) => {
     const savedCow = newCow.save();
     return savedCow;
 }
+const createCowx = async (req) => {
+    const cowData = {
+        cow_addr: req.body.cow_addr,
+        name: req.body.name,
+        username: req.body.username ||"xxx",
+        latest_longitude: req.body.latest_longitude || 10.879969479749972,
+        latest_latitude: req.body.latest_latitude || 106.80616368776177,
+        medicated: req.body.medicated || false,
+        sick: req.body.sick || false,
+        pregnant: req.body.pregnant || false,
+        missing: req.body.missing || false,
+        age: req.body.age || 2,
+        sex: req.body.sex || false,
+        weight: req.body.weight || 50,
+        timestamp: req.body.timestamp || Date.now()
+    };
 
+    const newCow = new CowModel(cowData);
+    const savedCow = await newCow.save();
+    return savedCow;
+};
+
+const getAllCows = async () => {
+    const cows = await CowModel.find();
+    return cows;
+}
 const getCowById = async (cowId) => {
     const cow = await CowModel.findById(cowId);
     return cow;
@@ -60,7 +85,9 @@ const updateLatestLocationById = async (cowId, longitude, latitude) => {
 
 
 export default {
+    getAllCows,
     createCow,
+    createCowx,
     getCowById,
     getCowByUsername,
     getCowByUsernameAndCowAddr,

@@ -1,11 +1,10 @@
 import express from "express"
 import cowController from "../controllers/cowController.js";
-
 let router = express.Router();
 
 /* ------------- Post ------------- */
 /* Create new cow */
-router.post('/', cowController.postCow);
+router.post('/', cowController.postCowx);
 /* -------------------------------- */
 
 
@@ -14,6 +13,8 @@ router.post('/', cowController.postCow);
 router.get('/username/:username', cowController.getCowByUsername);
 /* Get cow by id */
 router.get('/:cow_id', cowController.getCowById);
+router.get('/api/all', cowController.getAllCows);
+
 /* ------------------------------- */
 
 
@@ -27,6 +28,7 @@ router.delete('/username/:username', cowController.deleteCowByUsername);
 
 /* ------------- Update ------------- */
 /* Update cow by id */
+router.put('/locatio/:cow_id', cowController.updateLatestLocationById);
 router.put('/:cow_id', cowController.updateCowById);
 /* ---------------------------------- */
 export default router;

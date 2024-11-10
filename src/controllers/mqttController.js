@@ -1,6 +1,6 @@
 import mqtt from "mqtt";
 import cowLocationService from "../services/cowLocationService.js";
-import cowStateService from "../services/cowStateService.js";
+import cowStateService from "../services/cowService.js";
 
 const handle_mqtt_msg = async (topic, msg) => {
     let json_obj = JSON.parse(msg);
@@ -67,7 +67,7 @@ class MQTTClient {
         this.client.on('close', () => {
             console.log('Connection to MQTT Broker closed');
         });
-    }
+    }   
 
     publish(topic, message) {
         if (!this.client || !this.client.connected) {

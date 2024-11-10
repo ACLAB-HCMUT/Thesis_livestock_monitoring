@@ -17,9 +17,30 @@ const cowSchema = new mongoose.Schema({
     latest_latitude: {
         type: Number
     },
+    medicated:{
+        type: Boolean
+    },
+    sick: {
+        type: Boolean,
+    },
+    pregnant: {
+        type: Boolean
+    },
+    missing: {
+        type: Boolean 
+    },
+    age:{
+        type: Number
+    },
+    sex:{
+        type: Boolean
+    },
+    weight:{
+        type: Number
+    },
     timestamp: {
         type: Date
-    }
+    },
+    
 });
-
 export const CowModel = mongoose.model('Cow', cowSchema);
