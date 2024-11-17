@@ -38,6 +38,9 @@ const cowSchema = new mongoose.Schema({
     weight:{
         type: Number
     },
+    status:{
+        type: String
+    },
     timestamp: {
         type: Date
     },
