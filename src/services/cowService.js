@@ -4,12 +4,12 @@ const createCow = async (req) => {
     const newCow = new CowModel(req.body);
     const savedCow = newCow.save();
     return savedCow;
-}
+};
 const createCowx = async (req) => {
     const cowData = {
         cow_addr: req.body.cow_addr,
         name: req.body.name,
-        username: req.body.username ||"xxx",
+        username: req.body.username || "xxx",
         latest_longitude: req.body.latest_longitude || 10.879969479749972,
         latest_latitude: req.body.latest_latitude || 106.80616368776177,
         medicated: req.body.medicated || false,
@@ -19,9 +19,9 @@ const createCowx = async (req) => {
         age: req.body.age || 2,
         sex: req.body.sex || false,
         weight: req.body.weight || 50,
-        timestamp: req.body.timestamp || Date.now()
+        status: req.body.status || "Unknown",
+        timestamp: req.body.timestamp || Date.now(),
     };
-
     const newCow = new CowModel(cowData);
     const savedCow = await newCow.save();
     return savedCow;
@@ -30,59 +30,81 @@ const createCowx = async (req) => {
 const getAllCows = async () => {
     const cows = await CowModel.find();
     return cows;
-}
+};
 const getCowById = async (cowId) => {
     const cow = await CowModel.findById(cowId);
     return cow;
-}
+};
 
 const getCowByUsername = async (username) => {
     const cows = await CowModel.find({
-        username: username
+        username: username,
     });
 
     return cows;
-}
+};
 
 const getCowByUsernameAndCowAddr = async (username, cow_addr) => {
     const cow = await CowModel.findOne({
         username: username,
-        cow_addr: cow_addr
+        cow_addr: cow_addr,
     });
     return cow;
-}
+};
 
 const deleteCowById = async (cowId) => {
-    await CowModel.deleteOne({_id: cowId});
-}
+    await CowModel.deleteOne({ _id: cowId });
+};
 
 const deleteCowByUsername = async (username) => {
     await CowModel.deleteMany({
-        username: username
+        username: username,
     });
-}
+};
 
 const updateCowById = async (cowId, cow) => {
     const updatedCow = await CowModel.findByIdAndUpdate(
-        cowId, {$set: cow}, {new: true}
+        cowId,
+        { $set: cow },
+        { new: true }
     );
     return updatedCow;
-}
+};
 
 const updateLatestLocationById = async (cowId, longitude, latitude) => {
     const updatedCow = await CowModel.findById(cowId);
-    if(updatedCow) {        
+    if (updatedCow) {
         updatedCow.latest_longitude = longitude;
         updatedCow.latest_latitude = latitude;
         updatedCow.timestamp = Date.now();
 
         await updatedCow.save();
         return updatedCow;
-    }else{
+    } else {
         return undefined;
     }
-}
-
+};
+const updateCowStatusById = async (cowId, new_status) => {
+    const updatedCow = await CowModel.findById(cowId);
+    if (updatedCow) {
+        updatedCow.status = new_status;
+        updatedCow.timestamp = Date.now();
+        await updatedCow.save();
+        return updatedCow;
+    } else {
+        return undefined;
+    }
+};
+const updateCowAddressById = async (cowId, address) => {
+  const updatedCow = await CowModel.findById(cowId);
+  if (updatedCow) {
+    updatedCow.address = address;
+    await updatedCow.save();
+    return updatedCow;
+  } else {
+    return undefined;
+  }
+};
 
 export default {
     getAllCows,
@@ -95,4 +117,6 @@ export default {
     deleteCowByUsername,
     updateCowById,
     updateLatestLocationById,
-}
+    updateCowAddressById,
+    updateCowStatusById,
+};
