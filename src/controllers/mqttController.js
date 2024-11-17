@@ -1,31 +1,61 @@
 import mqtt from "mqtt";
 import cowLocationService from "../services/cowLocationService.js";
-import cowStateService from "../services/cowService.js";
+import cowService from "../services/cowService.js";
+import eventService from '../services/eventService.js';
+import constants from "./constants.js";
+import safeZoneService from "../services/safeZoneService.js";
 
 const handle_mqtt_msg = async (topic, msg) => {
-    let json_obj = JSON.parse(msg);
-    let opcode = json_obj.opcode;
-    let cow_addr;
-    switch(opcode){
-        case 0:
-            /* Cow location */
-            cow_addr = json_obj.address;
-            let longitude = json_obj.longitude;
-            let latitude = json_obj.latitude;
-
-            const newCowLocation = 
-                await cowLocationService.createCowLocation(cow_addr, topic, latitude, longitude);
-            console.log(newCowLocation);
+    let data, split_data, cow_id;
+    let username, response_msg;
+    const header = parseInt(msg.slice(0,2));
+    switch(header){
+        case constants.HEADER_GATEWAY_REQUEST_GET_COWS:
+            /* Call service get all cows by username */
+            username = topic;
+            let cows = await cowService.getCowByUsername(username);
+            /* Send response back to gateway */
+            response_msg = "0" + constants.HEADER_BACKEND_RESPONSE_GET_COWS + JSON.stringify(cows);
+                    
+            publish_mqtt_message(topic, response_msg);
             break;
-        case 1:
-            /* Cow state */
-            cow_addr = json_obj.address;
-            state = json_obj.state;
-
-            await cowStateService.createCowState(cow_addr, topic, state);
+        case constants.HEADER_GATEWAY_SEND_COW_STATUS:
+            /* Call service update cow status */
+            console.log("HEADER_GATEWAY_SEND_COW_STATUS");
+            data = msg.slice(2);
+            split_data = data.split(':');
+            cow_id = split_data[0];
+            let cow_status = split_data[1];
+            cowService.updateCowStatusById(cow_id, cow_status);
             break;
+        case constants.HEADER_GATEWAY_SEND_GPS:
+            console.log("HEADER_GATEWAY_SEND_GPS");
+            data = msg.slice(2);
+            split_data = data.split(':');
+            cow_id = split_data[0];
+            let longitude = split_data[1];
+            let latitude = split_data[2];
+            /* Call service update latest gps */
+            cowService.updateLatestLocationById(cow_id, longitude, latitude);
+            /* Call service create new gps */
+            cowLocationService.createCowLocation(cow_id, longitude, latitude);
+            break;
+        
+        case constants.HEADER_GATEWAY_REQUEST_SAFE_ZONES:
+            /* Call service to get safe zones by username */
+            username = topic;
+            const safeZone = await safeZoneService.getSafeZoneByUsername(username);
+            /* Send response back to gateway */
+            response_msg = "0" + constants.HEADER_BACKEND_RESPONSE_SAFE_ZONES + JSON.stringify(safeZone);
+            publish_mqtt_message(topic, response_msg);
+            break;
+        case constants.HEADER_GATEWAY_ACK:
+            /* Emit event */
+            eventService.mqttEvent.emit(`${msg}`, "");
+            break;
+
         default:
-            console.log("Opcode invalid");
+            console.log("Header invalid: ", header);
             break;
     }
 
@@ -56,12 +86,10 @@ class MQTTClient {
             if(topic == "V1" || topic == "V2"){
                 return;
             }
-
-            handle_mqtt_msg(topic, message);
-            // console.log(`Received message from ${topic}: ${message}`);
-            // let json_obj = JSON.parse(message);
-            // console.log(json_obj);
             
+            message = message.toString();
+            // console.log(`Received message from ${topic}: ${message}`);
+            handle_mqtt_msg(topic, message);
         });
     
         this.client.on('close', () => {
@@ -85,3 +113,6 @@ const MQTT_BROKER_URL = "mqtt://mqtt.ohstem.vn";
 
 export const mqttClient = new MQTTClient(MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER_URL);
 
+const publish_mqtt_message = (topic, message) => {
+    mqttClient.publish(topic, message);
+}
