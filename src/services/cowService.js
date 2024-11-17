@@ -20,6 +20,7 @@ const createCowx = async (req) => {
         sex: req.body.sex || false,
         weight: req.body.weight || 50,
         status: req.body.status || "Unknown",
+        safeZoneId: req.body.safeZoneId || "Undefined",
         timestamp: req.body.timestamp || Date.now(),
     };
     const newCow = new CowModel(cowData);

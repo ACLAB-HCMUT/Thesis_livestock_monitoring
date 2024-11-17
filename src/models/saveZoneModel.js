@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 const saveZoneSchema = new mongoose.Schema({
-  username: {
-    type: String
-  },
   safeZone:{
     type: [
       {
@@ -11,6 +8,9 @@ const saveZoneSchema = new mongoose.Schema({
       }
     ],
     required: true
+  },
+  username: {
+    type: String
   }
 });
 export const SaveZone = mongoose.model("SaveZone", saveZoneSchema);

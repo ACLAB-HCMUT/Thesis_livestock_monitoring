@@ -46,6 +46,9 @@ function isLeft(x1, y1, x2, y2, x, y) {
 }
 
 async function sendPushNotification(change) {
+  if(change.operationType === "delete" || change.operationType === "insert" ){
+    return;
+  } 
   const { updatedFields } = change.updateDescription;
   if (updatedFields.latest_latitude || updatedFields.latest_longitude) {
     const cow = await CowModel.findById(change.documentKey._id.toString());

@@ -1,4 +1,4 @@
-import * as safeZoneService from "../services/safeZoneService.js";
+import safeZoneService from "../services/safeZoneService.js";
 
 export const createSafeZone = async (req, res) => {
   try {

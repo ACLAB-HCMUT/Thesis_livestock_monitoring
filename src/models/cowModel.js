@@ -41,6 +41,10 @@ const cowSchema = new mongoose.Schema({
     status:{
         type: String
     },
+    safeZoneId: {
+        type: String,
+        default: "Undefined", 
+    },
     timestamp: {
         type: Date
     },
