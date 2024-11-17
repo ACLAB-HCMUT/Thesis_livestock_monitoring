@@ -23,6 +23,19 @@ export const getSafeZoneById = async (req, res) => {
     res.status(500).json({ message: "Failed to retrieve safe zone", error });
   }
 };
+export const getSafeZoneByUsername = async (req, res) => {
+  try {
+    const safeZones = await safeZoneService.getSafeZoneByUsername(req.params.username);
+    if (safeZones) {
+      res.status(200).json(safeZones);
+    } else {
+      res.status(404).json({ message: "Safe zone not found" });
+    }
+  } catch (error) {
+    console.error("Error retrieving safe zone:", error);
+    res.status(500).json({ message: "Failed to retrieve safe zone", error });
+  }
+};
 export const getAllSafeZone = async (req, res) => {
   try {
     const safeZone = await safeZoneService.getAllSafeZone();
