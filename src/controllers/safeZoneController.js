@@ -1,5 +1,6 @@
 import safeZoneService from "../services/safeZoneService.js";
 export const createSafeZone = async (req, res) => {
+  const username = req.params.username;
   try {
     const safeZone = await safeZoneService.createSafeZone(req.body);
     res.status(201).json(safeZone);
@@ -50,6 +51,7 @@ export const getAllSafeZone = async (req, res) => {
 
 
 export const updateSafeZone = async (req, res) => {
+  const username = req.params.username;
   try {
     const safeZone = await safeZoneService.updateSafeZone(req.params.id, req.body.safeZone);
     if (safeZone) {
@@ -65,6 +67,7 @@ export const updateSafeZone = async (req, res) => {
 
 
 export const deleteSafeZone = async (req, res) => {
+  const username = req.params.username;
   try {
     const result = await safeZoneService.deleteSafeZone(req.params.id);
     if (result) {

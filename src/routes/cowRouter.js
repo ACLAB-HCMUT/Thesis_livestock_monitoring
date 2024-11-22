@@ -4,7 +4,7 @@ let router = express.Router();
 
 /* ------------- Post ------------- */
 /* Create new cow */
-router.post('/', cowController.postCowx);
+router.post('/:username', cowController.postCowx);
 /* -------------------------------- */
 
 
@@ -20,7 +20,7 @@ router.get('/api/all', cowController.getAllCows);
 
 /* ------------- Delete ------------- */
 /* Delete cow by id */
-router.delete('/:cow_id', cowController.deleteCowById);
+router.delete('/:username/:cow_id', cowController.deleteCowById);
 /* Delete cow by username */
 router.delete('/username/:username', cowController.deleteCowByUsername);
 /* ---------------------------------- */
@@ -28,7 +28,7 @@ router.delete('/username/:username', cowController.deleteCowByUsername);
 
 /* ------------- Update ------------- */
 /* Update cow by id */
-router.put('/locatio/:cow_id', cowController.updateLatestLocationById);
-router.put('/:cow_id', cowController.updateCowById);
+router.put('/location/:username/:cow_id', cowController.updateLatestLocationById);
+router.put('/:username/:cow_id', cowController.updateCowById);
 /* ---------------------------------- */
 export default router;

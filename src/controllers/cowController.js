@@ -5,7 +5,7 @@ import eventService from "../services/eventService.js";
 
 const getCowByUsername = async (req, res) => {
     try {
-        const username = req.params['username'];
+        const username = req.params.username;
         const cows = await cowService.getCowByUsername(username);
         return res.status(200).json(cows);
     }catch(err){
@@ -25,7 +25,7 @@ const getAllCows = async (req, res) => {
 
 const getCowById = async (req, res) => {
     try {
-        const cow_id = req.params['cow_id'];
+        const cow_id = req.params.cow_id;
         const cow = await cowService.getCowById(cow_id);
         return res.status(200).json(cow);
     }catch(err){
@@ -43,8 +43,8 @@ const postCow = async (req, res) => {
 }
 const postCowx = async (req, res) => {
     try{
+        const username = req.params.username;
         const newCow = await cowService.createCowx(req);
-        const username = req.body['username']
         /* Notificate to gateway through mqtt */
         const message = `0${constants.HEADER_BACKEND_CREATE_COW}${cow}`;
         mqttService.publish(username, message);
@@ -67,10 +67,10 @@ const postCowx = async (req, res) => {
 
 const deleteCowById = async (req, res) => {
     try{
-        const cow_id = req.params['cow_id'];
+        const username = req.params.username;
+        const cow_id = req.params.cow_id;
         await cowService.deleteCowById(cow_id);
-        const username = "";
-        
+
         /* Notificate to gateway through mqtt */
         const message = `0${constants.HEADER_BACKEND_DELETE_COW}${cow_id}`;
         mqttService.publish(username, message);
@@ -103,7 +103,8 @@ const deleteCowByUsername = async (req, res) => {
 
 const updateLatestLocationById = async (req, res) => {
     try{
-        const cow_id = req.params['cow_id'];
+        const username = req.params.username;
+        const cow_id = req.params.cow_id;
         const latest_latitude = req.body['latest_latitude'];
         const latest_longitude = req.body['latest_longitude'];
         if(latest_longitude || latest_latitude){
@@ -119,7 +120,8 @@ const updateLatestLocationById = async (req, res) => {
 }
 const updateCowById = async (req, res) => {
     try {
-        const { cow_id } = req.params; 
+        const username = req.params.username;
+        const cow_id = req.params.cow_id; 
         
         const cowData = req.body; 
         console.log(cow_id);
