@@ -12,7 +12,6 @@ const getCowByUsername = async (req, res) => {
     return res.status(500).json(err);
   }
 };
-
 const getAllCows = async (req, res) => {
   try {
     const cows = await cowService.getAllCows(); // Fetch all cows using the service
@@ -48,28 +47,20 @@ const postCowx = async (req, res) => {
     const message = `0${constants.HEADER_BACKEND_CREATE_COW}${newCow}`;
     mqttService.publish(username, message);
 
-    let responded = false; // Flag to track if response was sent
-    
     /* Set timeout to wait for gateway response ack */
     const timeout = setTimeout(() => {
-      /* Response gateaway not response */
-      if (!responded) {
-        responded = true;
-        return res.status(424).json(newCow);
-      }
-    }, 3000);
-
+        /* Response gateaway not response */
+          return res.status(424).json(newCow);
+    }, 3000);  
     eventService.mqttEvent.once(`0${constants.HEADER_ACK}${newCow["_id"]}`,
       () => {
-        if (!responded) {
           clearTimeout(timeout);
           /* Response success */
-          responded = true;
           return res.status(200).json(newCow);
-        }
       }
     );
   } catch (err) {
+    console.log("cascjasijciasjcaiscasijcaisj");
     return res.status(500).json(err);
   }
 };
@@ -85,23 +76,16 @@ const deleteCowById = async (req, res) => {
     const message = `0${constants.HEADER_BACKEND_DELETE_COW}${cow_id}`;
     mqttService.publish(username, message);
 
-    let responded = false; // Flag to track if response was sent
+    // let responded = false; // Flag to track if response was sent
 
     /* Set timeout to wait for gateway response ack */
     const timeout = setTimeout(() => {
-      if (!responded) {
-        responded = true; // Prevent further responses
         return res.status(424).json({ result: "Gateway not response" });
-      }
     }, 3000);
 
-    /* Listen for acknowledgment event */
     eventService.mqttEvent.once(`0${constants.HEADER_ACK}${cow_id}`, () => {
-      if (!responded) {
         clearTimeout(timeout);
-        responded = true; // Prevent further responses
         return res.status(200).json({ result: "Delete success" });
-      }
     });
   } catch (err) {
     return res.status(500).json(err);
