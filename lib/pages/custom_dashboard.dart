@@ -255,15 +255,11 @@ class CustomDashboard extends StatelessWidget {
                               return Text("Loading save zones ... ");
                             } else if (state is SaveZoneLoaded) {
                               final saveZones = state.safeZones;
-
                               // Confirm saveZones is not empty
-                              print(
-                                  "Number of safe zones: ${saveZones.length}");
-
+                              print("Number of safe zones: ${saveZones.length}");
                               if (saveZones.isEmpty) {
                                 return Text("No save zone found ... ");
                               }
-
                               return Container(
                                 height: 200,
                                 child: ListView.builder(
@@ -274,8 +270,8 @@ class CustomDashboard extends StatelessWidget {
                                       color: Colors.green.shade300,
                                       child: ListTile(
                                         title: Text(
-                                          "Safe zone ${index + 1}",
-                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          saveZone.sequentialId ?? "",
+                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
                                         ),
                                         subtitle: Text(
                                           "Points: ${saveZone.safeZone?.length ?? 0}",
@@ -295,7 +291,7 @@ class CustomDashboard extends StatelessWidget {
                                                           saveZone.safeZone ??
                                                               [],
                                                       name:
-                                                          "Safe zone ${index + 1}",
+                                                          saveZone.sequentialId ?? "",
                                                     ),
                                                   ),
                                                 );

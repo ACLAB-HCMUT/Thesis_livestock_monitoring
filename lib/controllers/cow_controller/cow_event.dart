@@ -39,45 +39,62 @@ class UpdateCowFieldsEvent extends CowEvent {
   final bool? isSick;
   final bool? isPregnant;
   final bool? isMedicated;
+  final String? safeZoneId;
 
-  UpdateCowFieldsEvent({
-    required this.cowId,
-    this.name,
-    this.age,
-    this.weight,
-    this.isMale,
-    this.isSick,
-    this.isPregnant,
-    this.isMedicated
-  });
+  UpdateCowFieldsEvent(
+      {required this.cowId,
+      this.name,
+      this.age,
+      this.weight,
+      this.isMale,
+      this.isSick,
+      this.isPregnant,
+      this.isMedicated,
+      this.safeZoneId});
 
   @override
-  List<Object?> get props => [cowId, name, age, weight, isMale, isSick, isPregnant, isMedicated];
+  List<Object?> get props => [
+        cowId,
+        name,
+        age,
+        weight,
+        isMale,
+        isSick,
+        isPregnant,
+        isMedicated,
+        safeZoneId
+      ];
 }
+
 class CreateCowEvent extends CowEvent {
   final int? cow_addr;
   final String? name;
+  final String? username;
   final int? age;
   final int? weight;
   final bool? isMale;
-  CreateCowEvent({
-    this.cow_addr,
-    this.name,
-    this.age,
-    this.weight,
-    this.isMale
-  });
+  final String? safeZoneId;
+  CreateCowEvent(
+      {this.cow_addr,
+      this.name,
+      this.username,
+      this.age,
+      this.weight,
+      this.isMale,
+      this.safeZoneId});
 
   @override
-  List<Object?> get props => [cow_addr, name, age, weight, isMale];
+  List<Object?> get props =>
+      [cow_addr, name, username, age, weight, isMale, safeZoneId];
 }
-class GetAllCowEvent extends CowEvent {
 
+class GetAllCowEvent extends CowEvent {
   GetAllCowEvent();
 
   @override
   List<Object?> get props => [];
 }
+
 class GetAllCowByUsernameEvent extends CowEvent {
   final String username;
 
@@ -95,6 +112,25 @@ class GetCowByIdEvent extends CowEvent {
   @override
   List<Object?> get props => [cowId];
 }
+
+class UpdatedCowLocationMQTTEvent extends CowEvent {
+  final String cowId;
+  final double latitude;
+  final double longitude;
+
+  UpdatedCowLocationMQTTEvent(this.cowId, this.latitude, this.longitude);
+  @override
+  List<Object?> get props => [cowId, latitude, longitude];
+}
+class UpdatedCowSatusMQTTEvent extends CowEvent {
+  final String cowId;
+  final String status;
+  UpdatedCowSatusMQTTEvent(this.cowId, this.status);
+  @override
+  List<Object?> get props => [cowId, status];
+}
+
+
 class DeleteCowByIdEvent extends CowEvent {
   final String cowId;
 
@@ -103,14 +139,3 @@ class DeleteCowByIdEvent extends CowEvent {
   @override
   List<Object?> get props => [cowId];
 }
-
-
-class CowDataChangedEvent extends CowEvent {
-  final CowModel updatedCow;
-
-  CowDataChangedEvent(this.updatedCow);
-
-  @override
-  List<Object> get props => [updatedCow];
-}
-

@@ -6,18 +6,22 @@ import 'package:http/http.dart' as http;
 Future<CowModel?> postCow(
   int? cow_addr,
   String? name, 
+  String? username,
   int? age, 
   int? weight,
-  bool? isMale
+  bool? isMale,
+  String? safeZoneId
 ) async {
   try{
     var url = Uri.http(serverUrl, '/cow');
     var body = {
       if (cow_addr != null) 'cow_addr' : cow_addr,
       if (name != null) 'name': name,
+      if (username != null) 'username': username,
       if (age != null) 'age': age,
       if (weight != null) 'weight': weight,
       if (isMale != null) 'sex': isMale,
+      if (safeZoneId != null) 'safeZoneId': safeZoneId,
     };
     var res = await http.post(
       url,
@@ -46,7 +50,8 @@ Future<CowModel?> updateCowById(
   bool? isMale,
   bool? isSick,
   bool? isPregnant,
-  bool? isMedicated
+  bool? isMedicated,
+  String? safeZoneId
 ) async {
   try {
     var url = Uri.http(serverUrl, '/cow/$cowId');
@@ -60,6 +65,7 @@ Future<CowModel?> updateCowById(
       if (isSick != null) 'sick': isSick,
       if (isPregnant != null) 'pregnant': isPregnant,
       if (isMedicated != null) 'medicated' :isMedicated,
+      if (safeZoneId != null) 'safeZoneId' : safeZoneId
     };
     var res = await http.put(
       url,
@@ -103,7 +109,6 @@ Future<CowModel?> getCowById(String cowId) async {
 Future<List<CowModel>?> getAllCow() async {
   try{
     var url = Uri.http(serverUrl, '/cow/api/all');
-
     var res = await http.get(
       url
     );
@@ -114,7 +119,6 @@ Future<List<CowModel>?> getAllCow() async {
       for(final cowModelJson in cowModelJsons){
         cowModels.add(CowModel.fromJson(cowModelJson));
       }
-      
       return cowModels;
     }else {
       print("getAllCow failed, status code: ${res.statusCode}");

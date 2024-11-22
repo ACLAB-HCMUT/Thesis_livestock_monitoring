@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
+import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
 import 'package:do_an_app/pages/map_libre_page.dart';
@@ -8,7 +10,12 @@ import 'dart:convert';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+
 class SplashScreen extends StatefulWidget {
+  final CowBloc cowBloc;
+  final SaveZoneBloc saveZoneBloc;
+
+  const SplashScreen({super.key, required this.cowBloc, required this.saveZoneBloc});
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -52,11 +59,10 @@ class _SplashScreenState extends State<SplashScreen> {
     final cowIdPattern = RegExp(r'Cow with ID (\w+) has exited the safe zone');
     final match = cowIdPattern.firstMatch(messageBody);
     final cowId = match?.group(1);
-
-    context.read<SaveZoneBloc>().add(GetAllSaveZoneEvent());
-
     if (cowId != null) {
-      _navigateWithFade(MapLibrePage(cowId: cowId));
+      widget.saveZoneBloc.add(GetAllSaveZoneEvent());
+      widget.cowBloc.add(GetCowByIdEvent(cowId));
+      _navigateWithFade(MapLibrePage());
     } else {
       _navigateToHomePage();
     }

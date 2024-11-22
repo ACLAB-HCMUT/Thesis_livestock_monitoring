@@ -146,7 +146,10 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
                 'longitude': point.longitude,
               })
           .toList();
-      var body = {'safeZone': safeZoneData};
+      var body = {
+        'username': 'hoangs369',
+        'safeZone': safeZoneData,
+      };
       var res = await http.post(
         url,
         body: jsonEncode(body),
@@ -197,63 +200,96 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Define Safe Zone',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+      appBar: AppBar(
+        title: Text(
+          'Define Safe Zone',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          centerTitle: true,
-          backgroundColor: Colors.green[300],
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.save,
-              ),
-              onPressed: () {
-                _saveSafeZone(context);
-              }, // Save button to store the zone
-              color: Colors.white,
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.green[300],
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.save,
             ),
+            onPressed: () {
+              _saveSafeZone(context);
+            }, // Save button to store the zone
+            color: Colors.white,
+          ),
+        ],
+      ),
+      body: currentLocation == null
+          ? Center(child: CircularProgressIndicator())
+          : Stack(
+              children: [
+                MapLibreMap(
+                  styleString:
+                      "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(currentLocation!.latitude!,
+                        currentLocation!.longitude!),
+                    zoom: 17.5,
+                  ),
+                  onMapCreated: _onMapCreated,
+                  onMapClick: (point, latLng) => _addPoint(latLng),
+                ),
+                Positioned(
+                  bottom: 20,
+                  left: 20,
+                  child: FloatingActionButton(
+                    heroTag: "btn1",
+                    child: Icon(Icons.done),
+                    onPressed: _drawSafeZonePolygon, // Complete polygon
+                  ),
+                ),
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: FloatingActionButton(
+                    heroTag: "btn2",
+                    child: Icon(Icons.clear),
+                    backgroundColor: Colors.red.shade300,
+                    onPressed: _clearAllPoints, // Complete polygon
+                  ),
+                ),
+              ],
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => CustomDashboard()),
+          );
+        },
+        backgroundColor: Colors.green.shade300,
+        child: Icon(Icons.home, size: 28, color: Colors.white),
+        shape: CircleBorder(),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.green.shade300,
+        shape: CircularNotchedRectangle(),
+        notchMargin: 6.0,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+                icon: Icon(
+                  Icons.map,
+                  color: Colors.white,
+                ),
+                onPressed: () {}),
+            IconButton(
+                icon: Icon(Icons.settings, color: Colors.white),
+                onPressed: () {}),
           ],
         ),
-        body: currentLocation == null
-            ? Center(child: CircularProgressIndicator())
-            : Stack(
-                children: [
-                  MapLibreMap(
-                    styleString:
-                        "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(currentLocation!.latitude!,
-                          currentLocation!.longitude!),
-                      zoom: 17.5,
-                    ),
-                    onMapCreated: _onMapCreated,
-                    onMapClick: (point, latLng) => _addPoint(latLng),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    left: 20,
-                    child: FloatingActionButton(
-                      heroTag: "btn1",
-                      child: Icon(Icons.done),
-                      onPressed: _drawSafeZonePolygon, // Complete polygon
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    right: 20,
-                    child: FloatingActionButton(
-                      heroTag: "btn2",
-                      child: Icon(Icons.clear),
-                      backgroundColor: Colors.red.shade300,
-                      onPressed: _clearAllPoints, // Complete polygon
-                    ),
-                  ),
-                ],
-              ));
+      ),
+    );
   }
 }

@@ -8,6 +8,7 @@ import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/models/save_zone_model.dart';
+import 'package:do_an_app/pages/custom_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -144,7 +145,41 @@ class _SafeZoneMapState extends State<SafeZoneMap> {
                 onMapCreated: _onMapCreated,
               ),
             ],
-          )),
+          ),
+          
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => CustomDashboard()),
+              );
+            },
+            backgroundColor: Colors.green.shade300,
+            child: Icon(Icons.home, size: 28, color: Colors.white),
+            shape: CircleBorder(),
+          ),
+          bottomNavigationBar: BottomAppBar(
+            color: Colors.green.shade300,
+            shape: CircularNotchedRectangle(),
+            notchMargin: 6.0,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                    icon: Icon(
+                      Icons.map,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {}),
+                IconButton(
+                    icon: Icon(Icons.settings, color: Colors.white),
+                    onPressed: () {}),
+              ],
+            ),
+          ),),
     );
   }
 }

@@ -179,10 +179,8 @@ import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 
 class MapLibrePage extends StatefulWidget {
-  final String cowId;
   const MapLibrePage({
     Key? key,
-    required this.cowId,
   }) : super(key: key);
 
   @override
@@ -339,6 +337,15 @@ class _MapLibrePageState extends State<MapLibrePage> {
         iconOpacity: 0.7,
       ),
     );
+    await mapController!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: cow_location,
+          zoom: 17.0,
+        ),
+      ),
+      duration: const Duration(seconds: 3), // Set animation duration
+    );
   }
 
   Future<List<LatLng>> getRoute(LatLng start, LatLng end) async {
@@ -409,7 +416,6 @@ class _MapLibrePageState extends State<MapLibrePage> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CowBloc>().add(GetCowByIdEvent(widget.cowId));
     return BlocListener<CowBloc, CowState>(
       listener: (context, state) async {
         if (state is CowLoaded) {
@@ -426,6 +432,14 @@ class _MapLibrePageState extends State<MapLibrePage> {
         }
       },
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.green[300],
+          title: Text(
+            "Cow Location",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+        ),
         body: Stack(
           children: [
             MapLibreMap(
@@ -438,9 +452,9 @@ class _MapLibrePageState extends State<MapLibrePage> {
                 zoom: 17.0,
               ),
             ),
-            
           ],
         ),
+        resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -454,6 +468,7 @@ class _MapLibrePageState extends State<MapLibrePage> {
           shape: CircleBorder(),
         ),
         bottomNavigationBar: BottomAppBar(
+          color: Colors.green.shade300,
           shape: CircularNotchedRectangle(),
           notchMargin: 6.0,
           child: Row(
@@ -461,7 +476,10 @@ class _MapLibrePageState extends State<MapLibrePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                  icon: Icon(Icons.map),
+                  icon: Icon(
+                    Icons.map,
+                    color: Colors.white,
+                  ),
                   onPressed: () {
                     _showPath = !_showPath;
 
@@ -479,7 +497,9 @@ class _MapLibrePageState extends State<MapLibrePage> {
                       }
                     }
                   }),
-              IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+              IconButton(
+                  icon: Icon(Icons.settings, color: Colors.white),
+                  onPressed: () {}),
             ],
           ),
         ),

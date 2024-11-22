@@ -5,16 +5,22 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 class SaveZoneModel {
   String? id;
   List<CoordinatePoint>? safeZone;
+  String? username;
+  String? sequentialId;
 
   SaveZoneModel({
     this.id,
     this.safeZone,
+    this.username,
+    this.sequentialId
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       '_id': id,
       'safeZone': safeZone?.map((x) => x.toMap()).toList(),
+      'username': username,
+      'sequentialId': sequentialId
     };
   }
 
@@ -28,6 +34,8 @@ class SaveZoneModel {
               ),
             )
           : null,
+      username: map['username'],
+      sequentialId : map['sequentialId']
     );
   }
 

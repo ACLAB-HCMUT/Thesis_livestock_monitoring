@@ -3,15 +3,29 @@ import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/pages/cow_add_new_screen.dart';
+import 'package:do_an_app/pages/custom_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:do_an_app/pages/cow_detail_screen.dart';
 import 'package:do_an_app/pages/cow_update_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 
-class CowListScreen extends StatelessWidget {
+class CowListScreen extends StatefulWidget {
+  const CowListScreen({super.key});
+
+  @override
+  State<CowListScreen> createState() => _CowListScreenState();
+}
+
+class _CowListScreenState extends State<CowListScreen> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.read<CowBloc>().add(GetAllCowEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
-    context.read<CowBloc>().add(GetAllCowEvent());
     return BlocListener<CowBloc, CowState>(
       listener: (context, state) {
         if (state is CowDeleted) {
@@ -20,10 +34,11 @@ class CowListScreen extends StatelessWidget {
       },
       child: BlocBuilder<CowBloc, CowState>(
         builder: (context, state) {
-          if (state is CowLoading || state is CowDeleting || state is CowLoaded) {
-            if(ModalRoute.of(context)?.isCurrent == true){   
-              if(state is CowLoaded){
-                //print("dasdasdasdasdasdasdasdas");
+          if (state is CowLoading ||
+              state is CowDeleting ||
+              state is CowLoaded) {
+            if (ModalRoute.of(context)?.isCurrent == true) {
+              if (state is CowLoaded) {
                 context.read<CowBloc>().add(GetAllCowEvent());
               }
             }
@@ -64,62 +79,101 @@ class CowListScreen extends StatelessWidget {
             final cows = state.cows;
 
             return Scaffold(
-                appBar: AppBar(
-                  title: Text(
-                    "Cow List",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+              appBar: AppBar(
+                title: Text(
+                  "Cow List",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                  centerTitle: true,
-                  backgroundColor: Colors.green[300],
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.add, color: Colors.black,),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CowAddNewScreen()),
-                        );
-                      },
-                    ),
-                  ],
                 ),
-                body: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        image: AssetImage('assets/background_image1.jpg'),
-                        fit: BoxFit.cover,
-                      )),
+                centerTitle: true,
+                backgroundColor: Colors.green[300],
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.black,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        child: GridView.builder(
-                          gridDelegate:
-                            SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 1,
-                            childAspectRatio: 1.7, // Adjust aspect ratio
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                          ),
-                          itemCount: cows.length,
-                          itemBuilder: (context, index) {
-                            final cow = cows[index];
-                            return CowCard(cow: cow);
-                          },
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CowAddNewScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              body: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                      image: AssetImage('assets/background_image1.jpg'),
+                      fit: BoxFit.cover,
+                    )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.7, // Adjust aspect ratio
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
                         ),
+                        itemCount: cows.length,
+                        itemBuilder: (context, index) {
+                          final cow = cows[index];
+                          return CowCard(
+                            cow: cow,
+                            parentContext: context,
+                          );
+                        },
                       ),
                     ),
+                  ),
+                ],
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => CustomDashboard()),
+                  );
+                },
+                backgroundColor: Colors.green.shade300,
+                child: Icon(Icons.home, size: 28, color: Colors.white),
+                shape: CircleBorder(),
+              ),
+              bottomNavigationBar: BottomAppBar(
+                color: Colors.green.shade300,
+                shape: CircularNotchedRectangle(),
+                notchMargin: 6.0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                        icon: Icon(
+                          Icons.map,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {}),
+                    IconButton(
+                        icon: Icon(Icons.settings, color: Colors.white),
+                        onPressed: () {}),
                   ],
-                ));
+                ),
+              ),
+            );
           } else if (state is CowError) {
             return Center(child: Text("Error: ${state.message}"));
-          }else {
+          } else {
             return Center(child: Text("No data found"));
           }
         },
@@ -130,8 +184,9 @@ class CowListScreen extends StatelessWidget {
 
 class CowCard extends StatelessWidget {
   final CowModel cow;
+  final BuildContext parentContext;
 
-  CowCard({required this.cow});
+  CowCard({required this.cow, required this.parentContext});
 
   @override
   Widget build(BuildContext context) {
@@ -213,13 +268,15 @@ class CowCard extends StatelessWidget {
                                   ),
                                   title: Text('Details'),
                                   onTap: () {
+                                    context
+                                        .read<CowBloc>()
+                                        .add(GetCowByIdEvent(cow.id ?? ""));
                                     Navigator.pop(context);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => CowDetailScreen(
-                                                cow: cow,
-                                              )),
+                                          builder: (context) =>
+                                              CowDetailScreen()),
                                     );
                                   },
                                 ),

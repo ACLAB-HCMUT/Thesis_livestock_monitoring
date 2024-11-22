@@ -1,3 +1,3 @@
-String serverUrl = "10.28.128.154:3000";
+String serverUrl = "10.229.231.192:3000";
 
 String username = "than";   

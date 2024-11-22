@@ -4,7 +4,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:do_an_app/models/cow_model.dart';
 class CowService {
   final WebSocketChannel _channel =
-      IOWebSocketChannel.connect('ws://10.28.128.154:3000');
+      IOWebSocketChannel.connect('ws://10.229.231.192:3000');
   
   // Stream of Cow updates  
   Stream<Map<String, dynamic>> get cowUpdates => _channel.stream.map((data) {
@@ -16,3 +16,5 @@ class CowService {
     _channel.sink.close();
   }
 }
+
+//// no longer used, MQTT instead
