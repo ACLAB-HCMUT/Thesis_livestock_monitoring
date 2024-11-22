@@ -13,11 +13,12 @@ Future<CowModel?> postCow(
   String? safeZoneId
 ) async {
   try{
-    var url = Uri.http(serverUrl, '/cow');
+    var url = Uri.http(serverUrl, '/cow/$username');
     var body = {
       if (cow_addr != null) 'cow_addr' : cow_addr,
       if (name != null) 'name': name,
       if (username != null) 'username': username,
+      
       if (age != null) 'age': age,
       if (weight != null) 'weight': weight,
       if (isMale != null) 'sex': isMale,
@@ -31,9 +32,15 @@ Future<CowModel?> postCow(
       },
     );
     if(res.statusCode == 200){
+      print("Successfully create cow");
       var bodyJson = jsonDecode(res.body);
       return CowModel.fromJson(bodyJson);
-    }else{
+    }else if(res.statusCode == 424){
+      print("Gateway not response");
+      var bodyJson = jsonDecode(res.body);
+      return CowModel.fromJson(bodyJson);
+    }
+    else{
       print("postCow failed, status code: ${res.statusCode}");
       return null;
     }
@@ -43,6 +50,7 @@ Future<CowModel?> postCow(
   }
 }
 Future<CowModel?> updateCowById(
+  String username,
   String cowId,
   String? name,
   int? age,
@@ -54,7 +62,7 @@ Future<CowModel?> updateCowById(
   String? safeZoneId
 ) async {
   try {
-    var url = Uri.http(serverUrl, '/cow/$cowId');
+    var url = Uri.http(serverUrl, '/cow/$username/$cowId');
     print(cowId);
     // Build a map with only the non-null fields
     var body = {
@@ -105,7 +113,7 @@ Future<CowModel?> getCowById(String cowId) async {
     print("getCowById failed, error: $err");
     return null;
   }
-}
+}   
 Future<List<CowModel>?> getAllCow() async {
   try{
     var url = Uri.http(serverUrl, '/cow/api/all');
@@ -156,17 +164,20 @@ Future<List<CowModel>?> getAllCowByUsername(String username) async {
   }
 }
 
-Future<int?> deleteCowById(String cowId) async {
+Future<int?> deleteCowById(String cowId, String username) async {
   try{
-    var url = Uri.http(serverUrl, '/cow/$cowId');
+    var url = Uri.http(serverUrl, '/cow/$username/$cowId');
 
     var res = await http.delete(
       url);
-    
     if(res.statusCode == 200){
       print("Delete success");
       return 200;
-    }else{
+    }else if(res.statusCode == 424){
+      print("Gateway not response");
+      return 200;
+    }
+    else{
       print("deleteCowById failed, status code: ${res.statusCode}");  
       return res.statusCode;
     }

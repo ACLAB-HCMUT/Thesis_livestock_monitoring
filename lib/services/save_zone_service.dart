@@ -33,9 +33,36 @@ Future<List<SaveZoneModel>?> getAllSaveZone() async {
   }
 }
 
-Future<int?> deleteSaveZoneById(String cowId) async {
+Future<List<SaveZoneModel>?> getSafeZoneByUsername(
+  String username
+) async {
   try{
-    var url = Uri.http(serverUrl, '/safezones/$cowId');
+    var url = Uri.http(serverUrl, '/safezones/username/$username');
+    var res = await http.get(
+      url
+    );
+
+    if(res.statusCode == 200){
+      List<dynamic> saveZoneModelJsons = json.decode(res.body);
+      
+      List<SaveZoneModel> saveZoneModels = [];
+      for(final saveZoneModelJson in saveZoneModelJsons){
+        saveZoneModels.add(SaveZoneModel.fromJson(saveZoneModelJson));
+      }
+      return saveZoneModels;
+    }else {
+      print("getSafeZoneByUsername failed, status code: ${res.statusCode}");
+      return null;
+    }
+  }catch(err){
+    print("getSafeZoneByUsername failed, error: $err");
+    return null;
+  }
+}
+
+Future<int?> deleteSaveZoneById(String saveZoneId, String username) async {
+  try{
+    var url = Uri.http(serverUrl, '/safezones/$username/$saveZoneId');
 
     var res = await http.delete(
       url);

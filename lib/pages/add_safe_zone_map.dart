@@ -139,7 +139,7 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
       return;
     }
     try {
-      var url = Uri.http(serverUrl, '/safezones');
+      var url = Uri.http(serverUrl, '/safezones/hoangs369');
       final safeZoneData = polygonPoints
           .map((point) => {
                 'latitude': point.latitude,

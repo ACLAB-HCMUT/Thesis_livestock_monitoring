@@ -31,6 +31,7 @@ abstract class CowEvent extends Equatable {
 }
 
 class UpdateCowFieldsEvent extends CowEvent {
+  final String username;
   final String cowId;
   final String? name;
   final int? age;
@@ -42,7 +43,8 @@ class UpdateCowFieldsEvent extends CowEvent {
   final String? safeZoneId;
 
   UpdateCowFieldsEvent(
-      {required this.cowId,
+      {required this.username,
+      required this.cowId,
       this.name,
       this.age,
       this.weight,
@@ -54,6 +56,7 @@ class UpdateCowFieldsEvent extends CowEvent {
 
   @override
   List<Object?> get props => [
+        username,
         cowId,
         name,
         age,
@@ -133,9 +136,10 @@ class UpdatedCowSatusMQTTEvent extends CowEvent {
 
 class DeleteCowByIdEvent extends CowEvent {
   final String cowId;
+  final String username;
 
-  DeleteCowByIdEvent(this.cowId);
+  DeleteCowByIdEvent(this.cowId, this.username);
 
   @override
-  List<Object?> get props => [cowId];
+  List<Object?> get props => [cowId, username];
 }

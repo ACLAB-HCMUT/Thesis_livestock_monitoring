@@ -303,7 +303,7 @@ class CowCard extends StatelessWidget {
                                     Navigator.pop(context);
                                     context
                                         .read<CowBloc>()
-                                        .add(DeleteCowByIdEvent(cow.id!));
+                                        .add(DeleteCowByIdEvent(cow.id!, 'hoangs369'));
                                   },
                                 ),
                               ],

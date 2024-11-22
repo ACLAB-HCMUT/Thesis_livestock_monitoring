@@ -59,6 +59,7 @@
 // }
 
 // final cowBloc = CowBloc();
+import 'package:do_an_app/global.dart';
 import 'package:do_an_app/services/cowService.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:do_an_app/models/cow_model.dart';
@@ -102,6 +103,7 @@ class CowBloc extends Bloc<CowEvent, CowState> {
 
     try {
       final updatedCow = await updateCowById(
+          event.username,
           event.cowId,
           event.name,
           event.age,
@@ -125,7 +127,6 @@ class CowBloc extends Bloc<CowEvent, CowState> {
 
   Future<void> _onGetAllCow(
       GetAllCowEvent event, Emitter<CowState> emit) async {
-    print("shibal");
     emit(CowLoading());
     try {
       List<CowModel>? cows = await getAllCow();
@@ -223,7 +224,7 @@ class CowBloc extends Bloc<CowEvent, CowState> {
       DeleteCowByIdEvent event, Emitter<CowState> emit) async {
     emit(CowDeleting());
     try {
-      int? statusCode = await deleteCowById(event.cowId);
+      int? statusCode = await deleteCowById(event.cowId, event.username);
       emit(statusCode == 200
           ? CowDeleted(event.cowId)
           : CowError("Failed to delete cow"));

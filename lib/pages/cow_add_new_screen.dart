@@ -17,8 +17,6 @@ class CowAddNewScreen extends StatefulWidget {
 
 class _CowUpdateScreenState extends State<CowAddNewScreen> {
   String? _selectedSafeZoneId;
-  late TextEditingController _cowAddressController;
-  late TextEditingController _usernameController;
   late TextEditingController _nameController;
   late TextEditingController _ageController;
   late TextEditingController _weightController;
@@ -26,8 +24,6 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
   @override
   void initState() {
     super.initState();
-    _cowAddressController = TextEditingController(text: "");
-    _usernameController = TextEditingController(text: "");
     _nameController = TextEditingController(text: "");
     _ageController = TextEditingController(text: "");
     _weightController = TextEditingController(text: "");
@@ -46,7 +42,7 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
     return BlocListener<CowBloc, CowState>(
       listener: (context, state) {
         if (state is CowLoaded) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => CowListScreen()),
           );
@@ -89,10 +85,6 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
                     ),
                     child: Column(
                       children: [
-                        _buildInputField("Cow address", _cowAddressController),
-                        SizedBox(height: 10),
-                        _buildInputField("User name", _usernameController),
-                        SizedBox(height: 10),
                         _buildInputField("Cow name", _nameController),
                         SizedBox(height: 10),
                         _buildInputField("Age", _ageController),
@@ -127,8 +119,8 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
                                       width: 300, // Đặt chiều rộng phù hợp
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          // color: Colors.green
-                                        ),
+                                            // color: Colors.green
+                                            ),
                                         width: 300,
                                         alignment: Alignment.center,
                                         child: Text(
@@ -161,7 +153,6 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
                                   ),
                                 ),
                                 dropdownColor: Colors.green.shade100,
-                                
                                 icon: Icon(Icons.arrow_drop_down,
                                     color: Colors.green.shade300),
                                 style: TextStyle(
@@ -175,15 +166,14 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
                         ElevatedButton(
                           onPressed: () {
                             context.read<CowBloc>().add(CreateCowEvent(
-                                cow_addr:
-                                    int.tryParse(_cowAddressController.text),
+                                cow_addr: -1,
                                 name: _nameController.text,
-                                username: _usernameController.text,
+                                username: 'hoangs369',
                                 age: int.tryParse(_ageController.text),
                                 weight: int.tryParse(_weightController.text),
                                 isMale: _isMale,
-                                safeZoneId: _selectedSafeZoneId
-                              ));
+                                safeZoneId: _selectedSafeZoneId));
+                            
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green[300],
@@ -203,7 +193,7 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
             ),
           ],
         ),
-        resizeToAvoidBottomInset: false, 
+        resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -239,6 +229,7 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
       ),
     );
   }
+
   Widget _buildInputField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
@@ -251,6 +242,7 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
       ),
     );
   }
+
   Widget _buildCheckbox(String label, bool value, Function(bool?) onChanged) {
     return CheckboxListTile(
       title: Text(label),

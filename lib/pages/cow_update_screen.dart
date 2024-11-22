@@ -2,6 +2,7 @@ import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
+import 'package:do_an_app/global.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/pages/cow_list_screen.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
@@ -190,6 +191,7 @@ class _CowUpdateScreenState extends State<CowUpdateScreen> {
                           onPressed: () {
                             context.read<CowBloc>().add(
                                   UpdateCowFieldsEvent(
+                                    username: 'hoangs369',
                                     cowId: widget.cow.id!,
                                     name: _nameController.text,
                                     age: int.tryParse(_ageController.text),

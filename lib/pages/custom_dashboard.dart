@@ -303,7 +303,7 @@ class CustomDashboard extends StatelessWidget {
                                             ),
                                             IconButton(
                                               onPressed: () {
-                                                context.read<SaveZoneBloc>().add(DeleteSaveZoneyIdEvent(saveZone.id?? ""));
+                                                context.read<SaveZoneBloc>().add(DeleteSaveZoneIdEvent(saveZone.id?? "", 'hoangs369'));
                                               },
                                               icon: Icon(
                                                 Icons.delete,

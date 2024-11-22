@@ -10,7 +10,7 @@ part 'save_zone_state.dart';
 class SaveZoneBloc extends Bloc<SaveZoneEvent, SaveZoneState> {
   SaveZoneBloc() : super(SaveZoneInitial()) {
     on<GetAllSaveZoneEvent>(_onGetAllSaveZone);
-    on<DeleteSaveZoneyIdEvent>(_onDeleteSaveZoneById); 
+    on<DeleteSaveZoneIdEvent>(_onDeleteSaveZoneById); 
   }
   Future<void> _onGetAllSaveZone(GetAllSaveZoneEvent event, Emitter<SaveZoneState> emit) async {
     emit(SaveZoneLoading());
@@ -22,10 +22,10 @@ class SaveZoneBloc extends Bloc<SaveZoneEvent, SaveZoneState> {
       emit(SaveZoneError(e.toString()));
     }
   }
-  Future<void> _onDeleteSaveZoneById(DeleteSaveZoneyIdEvent event, Emitter<SaveZoneState> emit) async {
+  Future<void> _onDeleteSaveZoneById(DeleteSaveZoneIdEvent event, Emitter<SaveZoneState> emit) async {
     emit((SaveZoneDeleting()));
     try {
-      int? statusCode = await deleteSaveZoneById(event.saveZoneId);
+      int? statusCode = await deleteSaveZoneById(event.saveZoneId, event.username);
       emit(statusCode == 200 ? SaveZoneDeleted(event.saveZoneId) : SaveZoneError("Failed to delete save zone"));
       if(state is SaveZoneDeleted){
         add(GetAllSaveZoneEvent());

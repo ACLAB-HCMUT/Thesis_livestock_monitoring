@@ -4,7 +4,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:do_an_app/models/cow_model.dart';
 class CowService {
   final WebSocketChannel _channel =
-      IOWebSocketChannel.connect('ws://10.229.231.192:3000');
+      IOWebSocketChannel.connect('ws://10.229.30.206:3000');
   
   // Stream of Cow updates  
   Stream<Map<String, dynamic>> get cowUpdates => _channel.stream.map((data) {

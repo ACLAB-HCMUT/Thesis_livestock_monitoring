@@ -11,9 +11,10 @@ class GetAllSaveZoneEvent extends SaveZoneEvent{
   @override
   List<Object> get props => [];
 }
-class DeleteSaveZoneyIdEvent extends SaveZoneEvent{
+class DeleteSaveZoneIdEvent extends SaveZoneEvent{
   final String saveZoneId;
-  DeleteSaveZoneyIdEvent(this.saveZoneId);
+  final String username;
+  DeleteSaveZoneIdEvent(this.saveZoneId , this.username);
   @override
-  List<Object> get props => [saveZoneId];
+  List<Object> get props => [saveZoneId, username];
 }
