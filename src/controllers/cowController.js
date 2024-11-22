@@ -90,11 +90,8 @@ const updateCowById = async (req, res) => {
         const cowData = req.body; 
         console.log(cow_id);
         console.log(cowData);
-        
         // Call the updateCowById function with cowId and cowData
         const updatedCow = await cowService.updateCowById(cow_id, cowData);
-
-
         if (updatedCow) {
             // Return a success response with the updated cow data
             return res.status(200).json(updatedCow);
@@ -108,8 +105,6 @@ const updateCowById = async (req, res) => {
         return res.status(500).json({ message: 'Failed to update cow', error });
     }
 };
-
-
 export default {
     getCowByUsername,
     getAllCows,

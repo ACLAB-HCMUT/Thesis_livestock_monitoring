@@ -1,5 +1,9 @@
 import { SaveZone } from "../models/saveZoneModel.js";
-const createSafeZone = async (safeZoneData) => {
+const createSafeZone = async (safeZoneBody) => {
+  const safeZoneData = {
+    'username': safeZoneBody.username,
+    'safeZone': safeZoneBody.safeZone,
+  }
   const safeZone = new SaveZone(safeZoneData);
   return await safeZone.save();
 }

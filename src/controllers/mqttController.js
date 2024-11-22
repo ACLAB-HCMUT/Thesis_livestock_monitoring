@@ -16,7 +16,6 @@ const handle_mqtt_msg = async (topic, msg) => {
             let cows = await cowService.getCowByUsername(username);
             /* Send response back to gateway */
             response_msg = "0" + constants.HEADER_BACKEND_RESPONSE_GET_COWS + JSON.stringify(cows);
-                    
             publish_mqtt_message(topic, response_msg);
             break;
         case constants.HEADER_GATEWAY_SEND_COW_STATUS:
@@ -33,14 +32,13 @@ const handle_mqtt_msg = async (topic, msg) => {
             data = msg.slice(2);
             split_data = data.split(':');
             cow_id = split_data[0];
-            let longitude = split_data[1];
-            let latitude = split_data[2];
+            let longitude = parseFloat(split_data[1]);
+            let latitude = parseFloat(split_data[2]);
             /* Call service update latest gps */
             cowService.updateLatestLocationById(cow_id, longitude, latitude);
             /* Call service create new gps */
             cowLocationService.createCowLocation(cow_id, longitude, latitude);
             break;
-        
         case constants.HEADER_GATEWAY_REQUEST_SAFE_ZONES:
             /* Call service to get safe zones by username */
             username = topic;
@@ -58,14 +56,10 @@ const handle_mqtt_msg = async (topic, msg) => {
             console.log("Header invalid: ", header);
             break;
     }
-
 }
-
 class MQTTClient {
-
     constructor(username, password, brokerUrl) {
         console.log('init MQTT');
-
         this.client = mqtt.connect(brokerUrl, {
             username: username,
             password: password,
@@ -85,7 +79,7 @@ class MQTTClient {
             topic = topic.split("/")[2]
             if(topic == "V1" || topic == "V2"){
                 return;
-            }
+            }   
             
             message = message.toString();
             // console.log(`Received message from ${topic}: ${message}`);
@@ -96,7 +90,6 @@ class MQTTClient {
             console.log('Connection to MQTT Broker closed');
         });
     }   
-
     publish(topic, message) {
         if (!this.client || !this.client.connected) {
           console.error("Client is not initialized or not connected.");
@@ -106,7 +99,6 @@ class MQTTClient {
         this.client.publish(`nguyentruongthan/feeds/${topic}`, message);
     }
 }
-
 const MQTT_USERNAME = "nguyentruongthan";
 const MQTT_PASSWORD = "";
 const MQTT_BROKER_URL = "mqtt://mqtt.ohstem.vn";

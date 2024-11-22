@@ -1,5 +1,4 @@
 import safeZoneService from "../services/safeZoneService.js";
-
 export const createSafeZone = async (req, res) => {
   try {
     const safeZone = await safeZoneService.createSafeZone(req.body);
@@ -9,7 +8,6 @@ export const createSafeZone = async (req, res) => {
     res.status(500).json({ message: "Failed to create safe zone", error });
   }
 };
-
 export const getSafeZoneById = async (req, res) => {
   try {
     const safeZone = await safeZoneService.getSafeZoneById(req.params.id);

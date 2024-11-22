@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 import { mqttClient } from "./src/controllers/mqttController.js";
 import userRouter from "./src/routes/userRouter.js";
@@ -14,6 +15,8 @@ import { createServer } from 'http';
 dotenv.config();
 
 const app = express();
+app.use(cors());
+
 const server = createServer(app);
 
 app.use(bodyParser.json());
