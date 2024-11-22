@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-import { mqttClient } from "./src/controllers/mqttController.js";
+import mqttClient from "./src/controllers/mqttController.js";
 import userRouter from "./src/routes/userRouter.js";
 import cowRouter from "./src/routes/cowRouter.js";
 import cowLocationRouter from "./src/routes/cowLocationRouter.js";
