@@ -1,4 +1,7 @@
 import cowService from "../services/cowService.js"
+import mqttService from "../services/mqttService.js";
+import constants from "./constants.js";
+import eventService from "../services/eventService.js";
 
 const getCowByUsername = async (req, res) => {
     try {
@@ -41,7 +44,22 @@ const postCow = async (req, res) => {
 const postCowx = async (req, res) => {
     try{
         const newCow = await cowService.createCowx(req);
-        return res.status(200).json(newCow);
+        const username = req.body['username']
+        /* Notificate to gateway through mqtt */
+        const message = `0${constants.HEADER_BACKEND_CREATE_COW}${cow}`;
+        mqttService.publish(username, message);
+        
+        /* Set timeout to wait for gateway response ack */
+        const timeout = setTimeout(() => {
+            /* Response gateaway not response */
+            return res.status(424).json({ "result": "Gateway not response" });
+        }, 3000)
+    
+        eventService.mqttEvent.once(`0${constants.HEADER_ACK}${newCow['_id']}`, () => {
+            clearTimeout(timeout);
+            /* Response success */
+            return res.status(200).json(newCow);
+        });
     }catch(err){
         return res.status(500).json(err);
     }
@@ -51,7 +69,23 @@ const deleteCowById = async (req, res) => {
     try{
         const cow_id = req.params['cow_id'];
         await cowService.deleteCowById(cow_id);
-        return res.status(200).json({message: "Delete success"});
+        const username = "";
+        
+        /* Notificate to gateway through mqtt */
+        const message = `0${constants.HEADER_BACKEND_DELETE_COW}${cow_id}`;
+        mqttService.publish(username, message);
+        
+        /* Set timeout to wait for gateway response ack */
+        const timeout = setTimeout(() => {
+            /* Response gateaway not response */
+            return res.status(424).json({ "result": "Gateway not response" });
+        }, 3000)
+    
+        eventService.mqttEvent.once(`0${constants.HEADER_ACK}${newCow['_id']}`, () => {
+            clearTimeout(timeout);
+            /* Response success */
+            return res.status(200).json({ "result": "Delete success" });
+        });
     }catch(err){
         return res.status(500).json(err);
     }

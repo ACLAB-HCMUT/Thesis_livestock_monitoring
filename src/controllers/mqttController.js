@@ -4,6 +4,7 @@ import cowService from "../services/cowService.js";
 import eventService from '../services/eventService.js';
 import constants from "./constants.js";
 import safeZoneService from "../services/safeZoneService.js";
+import mqttService from "../services/mqttService.js";
 
 const handle_mqtt_msg = async (topic, msg) => {
     let data, split_data, cow_id;
@@ -16,7 +17,7 @@ const handle_mqtt_msg = async (topic, msg) => {
             let cows = await cowService.getCowByUsername(username);
             /* Send response back to gateway */
             response_msg = "0" + constants.HEADER_BACKEND_RESPONSE_GET_COWS + JSON.stringify(cows);
-            publish_mqtt_message(topic, response_msg);
+            mqttService.publish(topic, response_msg);
             break;
         case constants.HEADER_GATEWAY_SEND_COW_STATUS:
             /* Call service update cow status */
@@ -25,7 +26,7 @@ const handle_mqtt_msg = async (topic, msg) => {
             split_data = data.split(':');
             cow_id = split_data[0];
             let cow_status = split_data[1];
-            cowService.updateCowStatusById(cow_id, cow_status);
+            await cowService.updateCowStatusById(cow_id, cow_status);
             break;
         case constants.HEADER_GATEWAY_SEND_GPS:
             console.log("HEADER_GATEWAY_SEND_GPS");
@@ -34,10 +35,17 @@ const handle_mqtt_msg = async (topic, msg) => {
             cow_id = split_data[0];
             let longitude = parseFloat(split_data[1]);
             let latitude = parseFloat(split_data[2]);
+            
             /* Call service update latest gps */
-            cowService.updateLatestLocationById(cow_id, longitude, latitude);
+            await cowService.updateLatestLocationById(cow_id, longitude, latitude);
             /* Call service create new gps */
-            cowLocationService.createCowLocation(cow_id, longitude, latitude);
+            await cowLocationService.createCowLocation(cow_id, longitude, latitude);
+
+            if(split_data.length == 4) {
+                /* Cow out of safe area */
+                /* Publish notification to user */
+
+            }
             break;
         case constants.HEADER_GATEWAY_REQUEST_SAFE_ZONES:
             /* Call service to get safe zones by username */
@@ -45,7 +53,7 @@ const handle_mqtt_msg = async (topic, msg) => {
             const safeZone = await safeZoneService.getSafeZoneByUsername(username);
             /* Send response back to gateway */
             response_msg = "0" + constants.HEADER_BACKEND_RESPONSE_SAFE_ZONES + JSON.stringify(safeZone);
-            publish_mqtt_message(topic, response_msg);
+            mqttService.publish(topic, response_msg);
             break;
         case constants.HEADER_GATEWAY_ACK:
             /* Emit event */
@@ -103,8 +111,6 @@ const MQTT_USERNAME = "nguyentruongthan";
 const MQTT_PASSWORD = "";
 const MQTT_BROKER_URL = "mqtt://mqtt.ohstem.vn";
 
-export const mqttClient = new MQTTClient(MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER_URL);
 
-const publish_mqtt_message = (topic, message) => {
-    mqttClient.publish(topic, message);
-}
+const mqttClient = new MQTTClient(MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER_URL);
+export default mqttClient;
