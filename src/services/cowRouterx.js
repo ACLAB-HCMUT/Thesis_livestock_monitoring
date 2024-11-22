@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import WebSocket from 'ws';
 import admin from "firebase-admin";
 import fcm from "fcm-notification";
-import serviceAccount from "../config/push-notification-key.json" with { type: "json" };
+import serviceAccount from "../config/push-notification-key.json" assert { type: "json" };
 import { CowModel } from "../models/cowModel.js";
 import { SaveZone } from "../models/saveZoneModel.js";
 
