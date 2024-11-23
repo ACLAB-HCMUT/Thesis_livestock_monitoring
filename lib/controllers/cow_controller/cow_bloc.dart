@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/services/cow_service.dart';

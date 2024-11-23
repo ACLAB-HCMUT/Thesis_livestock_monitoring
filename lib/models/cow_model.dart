@@ -1,5 +1,3 @@
-import 'package:http/http.dart';
-
 class CowModel {
   String? id;
   String name;
