@@ -2,6 +2,7 @@ import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/pages/cow_list_screen.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
@@ -183,7 +184,7 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
                               context.read<CowBloc>().add(CreateCowEvent(
                                   cow_addr: -1,
                                   name: _nameController.text,
-                                  username: 'hoangs369',
+                                  username: (context.read<UserBloc>().state as UserLoaded).user.username,
                                   age: int.tryParse(_ageController.text),
                                   weight: int.tryParse(_weightController.text),
                                   isMale: _isMale,

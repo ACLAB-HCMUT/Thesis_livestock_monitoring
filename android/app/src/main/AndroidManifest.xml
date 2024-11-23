@@ -47,10 +47,9 @@
     <!-- legacy for Android 11 or lower -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30"/>
-
-    <!-- legacy for Android 9 or lower -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permisssion.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permisssion.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permisssion.INTERNET"></uses-permission>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.

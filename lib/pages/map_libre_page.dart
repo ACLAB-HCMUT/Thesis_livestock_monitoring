@@ -287,7 +287,7 @@ class _MapLibrePageState extends State<MapLibrePage> {
   }
 
   void _onMapCreated(MapLibreMapController controller) async {
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 500));
     mapController = controller;
     final Uint8List markerIcon =
         await getImageFromAsset('assets/location_icon.jpg');

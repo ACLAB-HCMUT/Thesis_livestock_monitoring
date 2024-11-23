@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, avoid_print, use_super_parameters
 
-
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
 import 'package:do_an_app/pages/map_libre_page.dart';
 import 'package:do_an_app/pages/splash_screen.dart';
@@ -67,6 +67,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<SaveZoneBloc>(
           create: (context) => SaveZoneBloc(),
         ),
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc(),
+        ),
       ],
       child: AppWithMQTT(),
     );
@@ -93,7 +96,10 @@ class AppWithMQTT extends StatelessWidget {
         useMaterial3: true,
       ),
       navigatorKey: navigatorKey,
-      home: SplashScreen(cowBloc: context.read<CowBloc>(), saveZoneBloc:  context.read<SaveZoneBloc>(),), // Start with the SplashScreen
+      home: SplashScreen(
+        cowBloc: context.read<CowBloc>(),
+        saveZoneBloc: context.read<SaveZoneBloc>(),
+      ), // Start with the SplashScreen
       routes: {
         '/home': (context) =>
             Scaffold(body: SafeArea(child: CustomDashboard())),

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/global.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,6 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
   // Retrieve user's current location
   Future<void> _getCurrentLocation() async {
     Location location = Location();
-
     // Check if permissions are granted
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
@@ -58,7 +58,6 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
       }
     }
 
-    // Retrieve current location
     currentLocation = await location.getLocation();
 
     if (currentLocation != null) {
@@ -139,7 +138,8 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
       return;
     }
     try {
-      var url = Uri.http(serverUrl, '/safezones/hoangs369');
+      String username = (context.read<UserBloc>().state as UserLoaded).user.username ?? "";
+      var url = Uri.http(serverUrl, '/safezones/$username');
       final safeZoneData = polygonPoints
           .map((point) => {
                 'latitude': point.latitude,
@@ -147,7 +147,7 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
               })
           .toList();
       var body = {
-        'username': 'hoangs369',
+        'username': username,
         'safeZone': safeZoneData,
       };
       var res = await http.post(
@@ -185,7 +185,7 @@ class _AddSafeZoneMapState extends State<AddSafeZoneMap> {
   }
 
   void _onMapCreated(MapLibreMapController controller) async {
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 1000));
     mapController = controller;
     final Uint8List markerIcon =
         await getImageFromAsset('assets/location_icon1.jpg');

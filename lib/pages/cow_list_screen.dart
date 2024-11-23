@@ -10,6 +10,8 @@ import 'package:do_an_app/pages/cow_update_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 
+import '../controllers/user_controller/user_bloc.dart';
+
 class CowListScreen extends StatefulWidget {
   const CowListScreen({super.key});
 
@@ -389,7 +391,7 @@ class CowCard extends StatelessWidget {
                                     title: Text('Edit'),
                                     onTap: () {
                                       Navigator.pop(context);
-                                      Navigator.push(
+                                      Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -407,7 +409,7 @@ class CowCard extends StatelessWidget {
                                       Navigator.pop(context);
                                       context.read<CowBloc>().add(
                                           DeleteCowByIdEvent(
-                                              cow.id!, 'hoangs369'));
+                                              cow.id!, (context.read<UserBloc>().state as UserLoaded).user.username ?? ""));
                                     },
                                   ),
                                 ],

@@ -199,9 +199,7 @@ class CowDetailScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MapLibrePage(
-                                  
-                                ),
+                                builder: (context) => MapLibrePage(),
                               ),
                             );
                           }
@@ -249,39 +247,45 @@ class CowDetailScreen extends StatelessWidget {
                     onPressed: () {}),
                 IconButton(
                     icon: Icon(Icons.settings, color: Colors.white),
-                    onPressed: () {
-                      if(FlutterBluePlus.adapterStateNow == BluetoothAdapterState.on){
+                    onPressed: () async {
+                      BluetoothAdapterState currentState =
+                          await FlutterBluePlus.adapterState.first;
+
+                      if (currentState == BluetoothAdapterState.on) {
+                        // If Bluetooth is already on, navigate to the scan screen
                         Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BluetoothScanScreen()
-                              ),
-                            );
-                      }else{
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BluetoothScanScreen()),
+                        );
+                      } else {
+                        // If Bluetooth is off, show the dialog to prompt the user
                         showDialog(
                           context: context,
                           barrierDismissible: false,
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text(
-                                  'Bạn có muốn bật Bluetooth',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: "IndieFlower",
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                                'Bạn có muốn bật Bluetooth',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: "IndieFlower",
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               actions: [
                                 TextButton(
                                   child: Text("Xác nhận"),
                                   onPressed: () async {
-                                    //call event to turn on Bluetooth
                                     try {
                                       if (Platform.isAndroid) {
+                                        // Turn on Bluetooth
                                         await FlutterBluePlus.turnOn();
                                         Navigator.of(context).pop();
                                       }
                                     } catch (e) {
-                                      Snackbar.show(ABC.a, prettyException("Error Turning On:", e), success: false);
+                                      // Handle errors if Bluetooth cannot be turned on
+                                      print("Error Turning On Bluetooth: $e");
                                     }
                                   },
                                 ),
@@ -296,7 +300,6 @@ class CowDetailScreen extends StatelessWidget {
                           },
                         );
                       }
-                      
                     }),
               ],
             ),

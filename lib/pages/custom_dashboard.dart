@@ -2,6 +2,7 @@ import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/pages/add_safe_zone_map.dart';
 import 'package:do_an_app/pages/safe_zone_map.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class CustomDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<SaveZoneBloc>().add(GetAllSaveZoneEvent());
     context.read<CowBloc>().add(GetAllCowEvent());
+    context.read<UserBloc>().add(GetUserByUsernameEvent('hoangs369'));
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -24,14 +26,30 @@ class CustomDashboard extends StatelessWidget {
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text(
-                'Xin chào Vo Hoang',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
+              title: BlocBuilder<UserBloc, UserState>(
+                builder: (context, state) {
+                  if (state is UserLoaded) {
+                    return Text(
+                      'Xin chào ${state.user.fullname}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    );
+                  } else {
+                    return Text(
+                      'Xin chào',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    );
+                  }
+                },
               ),
               background: Stack(
                 fit: StackFit.expand,
@@ -212,7 +230,9 @@ class CustomDashboard extends StatelessWidget {
                                 color: Colors.green,
                               ),
                               label: Text('Xem danh sách',
-                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold)),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.grey[200],
                               )),
@@ -256,7 +276,8 @@ class CustomDashboard extends StatelessWidget {
                             } else if (state is SaveZoneLoaded) {
                               final saveZones = state.safeZones;
                               // Confirm saveZones is not empty
-                              print("Number of safe zones: ${saveZones.length}");
+                              print(
+                                  "Number of safe zones: ${saveZones.length}");
                               if (saveZones.isEmpty) {
                                 return Text("No save zone found ... ");
                               }
@@ -271,7 +292,10 @@ class CustomDashboard extends StatelessWidget {
                                       child: ListTile(
                                         title: Text(
                                           saveZone.sequentialId ?? "",
-                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13),
                                         ),
                                         subtitle: Text(
                                           "Points: ${saveZone.safeZone?.length ?? 0}",
@@ -290,8 +314,9 @@ class CustomDashboard extends StatelessWidget {
                                                       safeZones:
                                                           saveZone.safeZone ??
                                                               [],
-                                                      name:
-                                                          saveZone.sequentialId ?? "",
+                                                      name: saveZone
+                                                              .sequentialId ??
+                                                          "",
                                                     ),
                                                   ),
                                                 );
@@ -303,7 +328,11 @@ class CustomDashboard extends StatelessWidget {
                                             ),
                                             IconButton(
                                               onPressed: () {
-                                                context.read<SaveZoneBloc>().add(DeleteSaveZoneIdEvent(saveZone.id?? "", 'hoangs369'));
+                                                context
+                                                    .read<SaveZoneBloc>()
+                                                    .add(DeleteSaveZoneIdEvent(
+                                                        saveZone.id ?? "",
+                                                        (context.read<UserBloc>().state as UserLoaded).user.username ?? ""));
                                               },
                                               icon: Icon(
                                                 Icons.delete,
@@ -337,7 +366,9 @@ class CustomDashboard extends StatelessWidget {
                                 color: Colors.green,
                               ),
                               label: Text('Thêm vùng an toàn',
-                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold)),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.grey[200],
                               )),

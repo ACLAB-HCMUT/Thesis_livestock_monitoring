@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/models/user_model.dart';
+import 'package:do_an_app/services/user_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -59,6 +60,4 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       emit(UserError(e.toString()));
     }
   }
-
-
 }
