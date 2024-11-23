@@ -1,15 +1,12 @@
-import 'dart:convert';
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, avoid_print, use_super_parameters
+
 
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
-import 'package:do_an_app/pages/cow_list_screen.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
-import 'package:do_an_app/pages/home_page.dart';
 import 'package:do_an_app/pages/map_libre_page.dart';
 import 'package:do_an_app/pages/splash_screen.dart';
-import 'package:do_an_app/services/cowService.dart';
-import 'package:do_an_app/test_cow.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -65,7 +62,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<CowBloc>(
-          create: (context) => CowBloc(CowService()),
+          create: (context) => CowBloc(),
         ),
         BlocProvider<SaveZoneBloc>(
           create: (context) => SaveZoneBloc(),

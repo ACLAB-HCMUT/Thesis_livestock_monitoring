@@ -1,11 +1,15 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
+import 'dart:io';
+
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
-import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
+import 'package:do_an_app/pages/bluetooth_scan_screen.dart';
+import 'package:do_an_app/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:do_an_app/pages/map_libre_page.dart';
 
 class CowDetailScreen extends StatelessWidget {
@@ -192,7 +196,6 @@ class CowDetailScreen extends StatelessWidget {
                         onPressed: () {
                           final cowState = context.read<CowBloc>().state;
                           if (cowState is CowLoaded) {
-                            CowModel cow = cowState.cow;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -246,7 +249,55 @@ class CowDetailScreen extends StatelessWidget {
                     onPressed: () {}),
                 IconButton(
                     icon: Icon(Icons.settings, color: Colors.white),
-                    onPressed: () {}),
+                    onPressed: () {
+                      if(FlutterBluePlus.adapterStateNow == BluetoothAdapterState.on){
+                        Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BluetoothScanScreen()
+                              ),
+                            );
+                      }else{
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Bạn có muốn bật Bluetooth',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: "IndieFlower",
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              actions: [
+                                TextButton(
+                                  child: Text("Xác nhận"),
+                                  onPressed: () async {
+                                    //call event to turn on Bluetooth
+                                    try {
+                                      if (Platform.isAndroid) {
+                                        await FlutterBluePlus.turnOn();
+                                        Navigator.of(context).pop();
+                                      }
+                                    } catch (e) {
+                                      Snackbar.show(ABC.a, prettyException("Error Turning On:", e), success: false);
+                                    }
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text("Hủy"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      }
+                      
+                    }),
               ],
             ),
           ),

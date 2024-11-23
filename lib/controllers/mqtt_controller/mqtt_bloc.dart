@@ -1,11 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
-import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
+import 'package:do_an_app/global.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -16,7 +15,7 @@ class MQTTClientHelper {
   CowBloc? _cowBloc;
   final client = MqttServerClient('mqtt.ohstem.vn', '1883');
 
-  final String username = "nguyentruongthan";
+  final String MQTT_BROKER_NAME = "nguyentruongthan";
   String password = "";
   /* Constructor */
   MQTTClientHelper() {
@@ -33,7 +32,7 @@ class MQTTClientHelper {
         .withWillMessage('My Will message')
         .startClean()
         .withWillQos(MqttQos.atLeastOnce)
-        .authenticateAs(username, password);
+        .authenticateAs(MQTT_BROKER_NAME, password);
 
     client.connectionMessage = connMess;
   }
@@ -92,7 +91,7 @@ class MQTTClientHelper {
   /// The successful connect callback
   void onConnected() {
     print('OnConnected client callback - Client connection was sucessful');
-    client.subscribe("$username/feeds/+", MqttQos.atMostOnce);
+    client.subscribe("$MQTT_BROKER_NAME/feeds/$username", MqttQos.atMostOnce);
   }
 
   void pong() {
