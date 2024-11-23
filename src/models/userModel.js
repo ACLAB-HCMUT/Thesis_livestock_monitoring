@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  fullname: {
+    type: String,
+    require: true
+  }
+  ,
   global_address: {
     type: Number,
     require: true,
