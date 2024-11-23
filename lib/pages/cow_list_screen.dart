@@ -18,6 +18,7 @@ class CowListScreen extends StatefulWidget {
 }
 
 class _CowListScreenState extends State<CowListScreen> {
+  bool _isLoading = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -28,8 +29,22 @@ class _CowListScreenState extends State<CowListScreen> {
   Widget build(BuildContext context) {
     return BlocListener<CowBloc, CowState>(
       listener: (context, state) {
-        if (state is CowDeleted) {
-          context.read<CowBloc>().add(GetAllCowEvent());
+        if (state is CowDeleting) {
+          setState(() {
+            _isLoading = true;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+          if (state is CowDeleted) {
+            context.read<CowBloc>().add(GetAllCowEvent());
+            showTopSnackBar(
+                context, "Cow deleted successfully!", Colors.green.shade300);
+          } else if (state is CowError) {
+            showTopSnackBar(context, "'Failed to delete cow: ${state.message}'",
+                Colors.red.shade500);
+          }
         }
       },
       child: BlocBuilder<CowBloc, CowState>(
@@ -49,28 +64,32 @@ class _CowListScreenState extends State<CowListScreen> {
               body: ListView.builder(
                 itemCount: 5, // Show skeletons for 5 cows
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 20, // Placeholder for cow name
-                              width: double.infinity,
-                              color: Colors.grey[300],
-                            ),
-                            SizedBox(height: 8),
-                            Container(
-                              height: 15, // Placeholder for additional info
-                              width: double.infinity,
-                              color: Colors.grey[300],
-                            ),
-                          ],
+                  return Stack(
+                    children: [ Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 20, // Placeholder for cow name
+                                width: double.infinity,
+                                color: Colors.grey[300],
+                              ),
+                              SizedBox(height: 8),
+                              Container(
+                                height: 15, // Placeholder for additional info
+                                width: double.infinity,
+                                color: Colors.grey[300],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
+                    //if (_isLoading) _buildLoadingOverlay(),
+                    ]
                   );
                 },
               ),
@@ -180,6 +199,72 @@ class _CowListScreenState extends State<CowListScreen> {
       ),
     );
   }
+
+  void showTopSnackBar(BuildContext context, String message, Color color) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: 100.0,
+        left: MediaQuery.of(context).size.width * 0.1,
+        right: MediaQuery.of(context).size.width * 0.1,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              message,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+    overlay?.insert(overlayEntry);
+    Future.delayed(Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
+  }
+
+  Widget _buildLoadingOverlay() {
+    return Stack(
+      children: [
+        ModalBarrier(
+          color: Colors.black54,
+          dismissible: false,
+        ),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.green.shade300,
+                strokeWidth: 5.0, // Độ dày của vòng xoay
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Processing.  ..",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class CowCard extends StatelessWidget {
@@ -190,179 +275,232 @@ class CowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white.withOpacity(0.9),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey[400]!, // Light grey for the divider
-                    width: 1.0,
+    return GestureDetector(
+      onTap: () {
+        context.read<CowBloc>().add(GetCowByIdEvent(cow.id ?? ""));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CowDetailScreen()),
+        );
+      },
+      child: Card(
+        color: Colors.white.withOpacity(0.9),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.grey[400]!, // Light grey for the divider
+                      width: 1.0,
+                    ),
                   ),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: Center(
+                              child: Column(
+                            children: [
+                              Image.asset(
+                                'assets/cow_card_icon.jpg',
+                                width: 30,
+                                height: 30,
+                                color: Colors.green[300],
+                              )
+                            ],
+                          )),
                         ),
-                        child: Center(
-                            child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/cow_card_icon.jpg',
-                              width: 30,
-                              height: 30,
-                              color: Colors.green[300],
-                            )
-                          ],
-                        )),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        cow.cowAddr.toString() + ", " + cow.name,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.more_vert, size: 30),
-                    onPressed: () {
-                      // Show the modal bottom sheet
-                      showModalBottomSheet(
-                        context: context,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
+                        SizedBox(
+                          width: 10,
                         ),
-                        builder: (BuildContext context) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.info,
-                                    color: Colors.green[200],
+                        Text(
+                          cow.name,
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          cow.cowAddr == -1 ? "( Address not configured )" : "",
+                          style: TextStyle(
+                              fontSize: 11, color: Colors.brown.shade300),
+                        )
+                      ],
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.more_vert, size: 30),
+                      onPressed: () {
+                        // Show the modal bottom sheet
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (BuildContext context) {
+                            return Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.info,
+                                      color: Colors.green[200],
+                                    ),
+                                    title: Text('Details'),
+                                    onTap: () {
+                                      context
+                                          .read<CowBloc>()
+                                          .add(GetCowByIdEvent(cow.id ?? ""));
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CowDetailScreen()),
+                                      );
+                                    },
                                   ),
-                                  title: Text('Details'),
-                                  onTap: () {
-                                    context
-                                        .read<CowBloc>()
-                                        .add(GetCowByIdEvent(cow.id ?? ""));
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              CowDetailScreen()),
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: Icon(Icons.edit,
-                                      color: Colors.green[200]),
-                                  title: Text('Edit'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => CowUpdateScreen(
-                                                cow: cow,
-                                              )),
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: Icon(Icons.delete,
-                                      color: Colors.green[200]),
-                                  title: Text('Delete'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    context
-                                        .read<CowBloc>()
-                                        .add(DeleteCowByIdEvent(cow.id!, 'hoangs369'));
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  cow.sick == true
-                      ? 'Sick'
-                      : cow.medicated == true
-                          ? 'Medicated'
-                          : 'Healthy',
-                  style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.start,
+                                  ListTile(
+                                    leading: Icon(Icons.edit,
+                                        color: Colors.green[200]),
+                                    title: Text('Edit'),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CowUpdateScreen(
+                                                  cow: cow,
+                                                )),
+                                      );
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: Icon(Icons.delete,
+                                        color: Colors.green[200]),
+                                    title: Text('Delete'),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      context.read<CowBloc>().add(
+                                          DeleteCowByIdEvent(
+                                              cow.id!, 'hoangs369'));
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    )
+                  ],
                 ),
-                if (cow.missing == true) ...{
-                  Text(
-                    'Missing',
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.start,
-                  )
-                },
-                if (cow.pregnant == true) ...{
-                  Text(
-                    'Pregnant',
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.start,
-                  )
-                },
-                SizedBox(height: 4),
-                Text("Age: ${cow.age}",
-                    style: TextStyle(fontSize: 12, color: Colors.black)),
-                Text("Sex: ${cow.sex! ? "Male" : "Female"}",
-                    style: TextStyle(fontSize: 12, color: Colors.black)),
-                Text("Weight: ${cow.weight}",
-                    style: TextStyle(fontSize: 12, color: Colors.black)),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Status",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.green.shade300,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            cow.sick == true
+                                ? 'Sick'
+                                : cow.medicated == true
+                                    ? 'Medicated'
+                                    : 'Healthy',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black,
+                            ),
+                          ),
+                          if (cow.missing == true)
+                            Text(
+                              'Missing',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.black,
+                              ),
+                            ),
+                          if (cow.pregnant == true)
+                            Text(
+                              'Pregnant',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.black,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Information",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.green.shade300,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "Age: ${cow.age}",
+                            style: TextStyle(fontSize: 12, color: Colors.black),
+                          ),
+                          Text(
+                            "Sex: ${cow.sex! ? "Male" : "Female"}",
+                            style: TextStyle(fontSize: 12, color: Colors.black),
+                          ),
+                          Text(
+                            "Weight: ${cow.weight}",
+                            style: TextStyle(fontSize: 12, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

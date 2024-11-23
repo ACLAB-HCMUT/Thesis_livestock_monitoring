@@ -52,7 +52,7 @@ class _CowUpdateScreenState extends State<CowUpdateScreen> {
     return BlocListener<CowBloc, CowState>(
       listener: (context, state) {
         if (state is CowUpdated) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => CowListScreen()),
           );

@@ -1,3 +1,2 @@
-String serverUrl = "10.229.30.206:3000";
-
-String username = "than";   
+String serverUrl = "10.229.69.160:3000";
+String username = "than";  

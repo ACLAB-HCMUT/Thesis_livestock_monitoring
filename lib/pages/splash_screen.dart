@@ -67,11 +67,9 @@ class _SplashScreenState extends State<SplashScreen> {
       _navigateToHomePage();
     }
   }
-
   void _navigateToHomePage() {
     _navigateWithFade(Scaffold(body: SafeArea(child: CustomDashboard())));
   }
-
   void _navigateWithFade(Widget page) {
     Navigator.pushReplacement(
       context,
@@ -93,7 +91,6 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

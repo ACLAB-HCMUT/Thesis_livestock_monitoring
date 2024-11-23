@@ -119,12 +119,10 @@ class CowBloc extends Bloc<CowEvent, CowState> {
         emit(CowError("Update failed"));
       }
 
-      emit(CowUpdated());
     } catch (error) {
       emit(CowError('Failed to update cow'));
     }
   }
-
   Future<void> _onGetAllCow(
       GetAllCowEvent event, Emitter<CowState> emit) async {
     emit(CowLoading());
@@ -136,7 +134,6 @@ class CowBloc extends Bloc<CowEvent, CowState> {
       emit(CowError(e.toString()));
     }
   }
-
   Future<void> _onCreateCow(
       CreateCowEvent event, Emitter<CowState> emit) async {
     emit(CowLoading());
@@ -156,7 +153,6 @@ class CowBloc extends Bloc<CowEvent, CowState> {
       emit(CowError(e.toString()));
     }
   }
-
   Future<void> _onGetAllCowsByUsername(
       GetAllCowByUsernameEvent event, Emitter<CowState> emit) async {
     emit(CowLoading());
@@ -167,7 +163,6 @@ class CowBloc extends Bloc<CowEvent, CowState> {
       emit(CowError(e.toString()));
     }
   }
-
   Future<void> _onGetCowById(
       GetCowByIdEvent event, Emitter<CowState> emit) async {
     emit(CowLoading());
@@ -179,7 +174,6 @@ class CowBloc extends Bloc<CowEvent, CowState> {
       emit(CowError(e.toString()));
     }
   }
-
   Future<void> _onUpdatedCowLocationMQTT(
       UpdatedCowLocationMQTTEvent event, Emitter<CowState> emit) async {
     final currentState = state;
