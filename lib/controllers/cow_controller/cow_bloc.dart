@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-// import 'package:do_an_app/services/cowService.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/services/cow_service.dart';
@@ -8,7 +7,6 @@ import 'cow_event.dart';
 import 'cow_state.dart';
 
 class CowBloc extends Bloc<CowEvent, CowState> {
-  // final CowService cowService;
 
   CowBloc() : super(CowInitial()) {
     on<CreateCowEvent>(_onCreateCow);
@@ -19,23 +17,6 @@ class CowBloc extends Bloc<CowEvent, CowState> {
     on<DeleteCowByIdEvent>(_onDeleteCowById);
     on<GetAllCowEvent>(_onGetAllCow);
     on<UpdateCowFieldsEvent>(_onUpdateCowById);
-
-    // no longer used, MQTT instead
-    // Listen to real-time updates from cowService
-    // cowService.cowUpdates.listen((updatedCow) {
-    //   print("Database changed; triggering GetAllCowEvent. Id : " +
-    //       updatedCow['documentKey']['_id']);
-    //   if (state is CowLoaded &&
-    //       (state as CowLoaded).cow.id == updatedCow['documentKey']['_id']) {
-        
-    //     add(GetCowByIdEvent(updatedCow['documentKey']['_id']));
-    //   } else if (state is CowsLoaded &&
-    //       (state as CowsLoaded)
-    //           .cows
-    //           .any((cow) => cow.id == updatedCow['documentKey']['_id'])) {
-    //     add(GetAllCowEvent());
-    //   }
-    // });
   }
   Future<void> _onUpdateCowById(
       UpdateCowFieldsEvent event, Emitter<CowState> emit) async {

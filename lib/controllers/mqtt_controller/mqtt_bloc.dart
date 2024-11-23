@@ -1,11 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
-import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/global.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
