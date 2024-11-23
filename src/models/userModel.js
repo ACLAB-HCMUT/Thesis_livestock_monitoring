@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  global_address: {
+    type: Number,
+    require: true,
+    default: 0
+  }
 });
 
 export const UserModel = mongoose.model('User', userSchema);

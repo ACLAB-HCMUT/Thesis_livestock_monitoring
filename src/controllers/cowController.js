@@ -75,9 +75,7 @@ const deleteCowById = async (req, res) => {
     /* Notify to gateway through mqtt */
     const message = `0${constants.HEADER_BACKEND_DELETE_COW}${cow_id}`;
     mqttService.publish(username, message);
-
-    // let responded = false; // Flag to track if response was sent
-
+    
     /* Set timeout to wait for gateway response ack */
     const timeout = setTimeout(() => {
         return res.status(424).json({ result: "Gateway not response" });

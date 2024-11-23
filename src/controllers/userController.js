@@ -11,15 +11,31 @@ const postUser = async (req, res) => {
 
 const getUserByUsername = async (req, res) => {
     try{
-        const username = req.header('username');
+        const username = req.params.username;
         const user = await userService.getUserByUsername(username);
         return res.status(200).json(user);
     }catch(err){
         return res.status(500).json(err);
     }
 }
+const updateByUsername = async (req, res) => {
+    try{
+        const username = req.body.username;
+        const userData = req.body;
+        const updatedUser = await userService.updateByUsername(username, userData);
+        if(updatedUser){
+            return res.status(200).json(updatedUser);
+        }else{
+            return res.status(404).json({ message: "User not found" });
+        }
+    }catch(err){
+        console.log(err);
+        return res.status(500).json(err);
+    }
+}
 
 export default {
     postUser,
-    getUserByUsername
+    getUserByUsername,
+    updateByUsername
 }
