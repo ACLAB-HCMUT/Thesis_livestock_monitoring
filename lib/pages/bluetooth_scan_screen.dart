@@ -147,7 +147,6 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
             subtitle: Text(device.remoteId.toString()),
             trailing: IconButton(
               onPressed: result.advertisementData.connectable ? () async {
-                  print("connect");
                   await device.connect();
                   showDialog(
                     context: context,
@@ -165,10 +164,47 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
                           TextButton(
                             child: Text("Xác nhận"),
                             onPressed: () async {
-                              
+                              bool write_result = true;
+                              /* Call serivce to get global address of cow */
+
+                              int global_addr = 40000;
+                              /* Find service write cow addr */
+                              List<BluetoothService> services = await device.discoverServices();
+                              for(final service in services){
+                                if(service.serviceUuid.toString() != "63bf0b19-2b9c-473c-9e0a-2cfcaf03a770"){
+                                  continue;
+                                }
+                                List<BluetoothCharacteristic> characteristics = service.characteristics;
+                                for(final characteristic in characteristics){
+                                  if(characteristic.characteristicUuid.toString() != "63bf0b19-2b9c-473c-9e0a-2cfcaf03a771"){
+                                    continue;
+                                  }
+                                  global_addr = (global_addr + 1) % (0xffff);
+                                  try {
+                                    await characteristic.write([global_addr & 0xff, (global_addr >> 8) & 0xff]);
+                                  }catch(e) {
+                                    print('Write failed: $e');
+                                    write_result = false;
+                                  }
+                                } 
+                              }
                               /* Call service to config address */
+
                               await device.disconnect();
                               Navigator.of(context).pop();
+                              if(write_result == false) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                          title: Text(
+                                        "Không thể gán địa chỉ cho thiết bị",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: "IndieFlower",
+                                        ),
+                                      )));
+                              }
                             },
                           ),
                           TextButton(
