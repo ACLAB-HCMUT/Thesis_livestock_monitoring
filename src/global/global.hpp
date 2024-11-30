@@ -12,7 +12,7 @@ enum system_status_e {
 	CONNECTED
 };
 
-#define LORA_SERIAL DT_NODELABEL(uart0)
+#define LORA_SERIAL DT_NODELABEL(xiao_serial)
 
 #define LED0_NODE DT_ALIAS(led0)
 #define LED1_NODE DT_ALIAS(led1)
@@ -40,9 +40,15 @@ enum system_status_e {
 #define BUTTON_PORT GPIO0
 #define BUTTON_PIN  D4_PIN
 
+/* ID of cow address in flash memory*/
 #define COW_ADDR_ID 1
-extern enum system_status_e system_status;
 extern uint16_t cow_addr;
+
+extern enum system_status_e system_status;
+
+/* GPS value */
+extern float lat;
+extern float lng;
 
 /* This function will read cow_addr from flash memory */
 int init_cow_addr();

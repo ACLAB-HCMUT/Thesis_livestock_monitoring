@@ -18,7 +18,7 @@ uint16_t button_count = 0;
 struct gpio_dt_spec button_dt;
 
 int init_button(){
-    std::cout << "init_gps_serial\n";
+    std::cout << "init_button\n";
 
     const struct device *button_port = DEVICE_DT_GET(BUTTON_PORT);
 	if (!device_is_ready(button_port)) {

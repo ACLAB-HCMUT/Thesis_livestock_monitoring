@@ -18,7 +18,13 @@ void read_lora_entry(void *p1, void *p2, void *p3)
     uint8_t index = 0, is_begin = 0;
 	while (1) {
         while(lora_read(&data) == 0){
+            /* ------------ Test ------------- */
             std::cout << data;
+            if(data == '#') {
+                std::cout << std::endl;
+            }
+            /* -------------------------------- */
+            
             if(is_begin == 1){
                 if(data == '#'){
                     handle_lora_message(buffer, index);
@@ -32,6 +38,7 @@ void read_lora_entry(void *p1, void *p2, void *p3)
                 }
             }
         }
-		k_msleep(1000);
+        
+		k_msleep(10);
 	}
 }
