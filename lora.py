@@ -2,37 +2,6 @@ from serial import SerialException, Serial
 import lora_controller
 import constants
 
-lora_serial = Serial(port = constants.LORA_COM_PORT, baudrate = 9600)
-
-def send_data(msg):
-    lora_serial.write(msg)
-
-
-lora_msg = ''
-def recv_data():
-
-    global lora_msg
-
-    if(lora_serial == None):
-        return
-    try:
-        bytesToRead = lora_serial.inWaiting()
-        if (bytesToRead > 0):
-            msg_recv = lora_serial.read(bytesToRead).decode()
-            lora_msg += msg_recv
-            if '!' in lora_msg and '#' in lora_msg:
-                begin = lora_msg.index('!')
-                end = lora_msg.index('#')
-                lora_bytes = lora_msg[begin + 1, end].encode()
-                lora_msg = lora_msg[end + 1:]
-                lora_controller.handle_lora_msg(lora_bytes)
-
-    except SerialException:
-        print(f"Disconnect from {lora_serial}")
-        lora_serial = None
-
-
-
 class Lora:
     """
         This class will handle lora communication
@@ -55,22 +24,12 @@ class Lora:
 
         # init attributes use to handle message from Lora
         # this attribute use to store message from Lora
-        self.lora_msg = ""
+        self.lora_msg = [0] * 50
         self.is_begin = False
+        self.length = 0
 
-    def send_data(self, addr: int, channel: int, data: list):
-        
-        addr_bytes: list = [0x00] * 2
-        addr_bytes[0] = addr >> 8
-        addr_bytes[1] = addr & 0xff
-
-        tx_buffer = []
-        tx_buffer += addr_bytes
-
-        tx_buffer.append(channel)
-        tx_buffer += data
-
-        self.send(tx_buffer)
+        self.sending_timeout = 0
+        self.cow_addr_is_waiting = 0
 
     def send_command(self, command: int, addr: int, length: int, param: list):
         tx_buffer = [command, addr, length]
@@ -79,7 +38,7 @@ class Lora:
             for i in range(length):
                 tx_buffer.append(param[i])
 
-        self.send(tx_buffer)
+        self.send_buffer(tx_buffer)
     
     def config_addr(self, addr: int):
 
@@ -117,37 +76,52 @@ class Lora:
         try:
             #	Get the number of bytes in the input buffer
             bytesToRead = self.lora_ser.inWaiting()
-            if (bytesToRead > 0):
-                bytes = self.lora_ser.read(bytesToRead)
-                print(f"From UART:")
-                for byte in bytes:
-                    print(byte)
-                # #read all data in serial and assign to mess
-                # self.lora_msg = self.lora_msg + self.lora_ser(bytesToRead).decode("utf-8")
-                # #Format of data is "!<content>#" 
-                # while ("#" in self.lora_msg) and ("!" in self.lora_msg):
-                #     start = self.lora_msg.find("!")
-                #     end = self.lora_msg.find("#")
-                #     # processData(mess[start:end + 1], ser)
-                #     # print(f"From UART: {message[start:end + 1]}")
-                #     self.handle_lora_msg(self.lora_msg[start:end + 1])
-                #     if (end == len(self.lora_msg)):
-                #         self.lora_msg = ""
-                #     else:
-                #         self.lora_msg = self.lora_msg[end+1:]
+            while(bytesToRead > 0):
+                byte_recv = self.lora_ser.read(1)
+                if (byte_recv == b'!' and self.length == 0):
+                    self.is_begin = True
+                else:
+                    if(self.is_begin == True):
+                        if(byte_recv == b'#' and self.length > 10):
+                            lora_recv_frame = self.lora_msg[0: self.length]
+                            if(self.get_cow_addr(lora_recv_frame) == self.cow_addr_is_waiting):
+                                lora_controller.handle_lora_msg(bytes(self.lora_msg[0: self.length]))
+                                self.cow_addr_is_waiting = 0
+                            self.is_begin = False
+                            self.length = 0
+                        else:
+                            self.lora_msg[self.length] = byte_recv[0]
+                            self.length += 1
+                bytesToRead -= 1
 
         except SerialException:
             print(f"Disconnect from {self.lora_ser}")
             self.lora_ser = None
-        
-    def handle_msg(self, msg: str):
-        """
-            This function use to handle data which come from lora
-        """
-        lora_controller.handle_lora_msg(msg)
     
-    def send(self, tx_buffer: list):
-        print(f"Send UART: {tx_buffer}")
-        self.lora_ser.write(tx_buffer)
+    def get_cow_addr(self, msg: bytes):
+        return (msg[0] << 8) | msg[1]
+        
+    
+    def send_lora_msg(self, addr: int, opcode: int):
+        tx_buffer: list = []
+        
+        tx_buffer.append(33) # 33 = '!'
+
+        tx_buffer.append(addr >> 8)
+        tx_buffer.append(addr & 0xff)
+
+        tx_buffer.append(opcode & 0xff)
+
+        tx_buffer.append(35) # 35 = '#'
+        self.send_buffer(tx_buffer)
+        self.sending_timeout = 5000
+        self.cow_addr_is_waiting = addr
+
+    def send_buffer(self, tx_buffer: list):
+        print(f"Send lora data: {tx_buffer}")
+        try:
+            self.lora_ser.write(tx_buffer)
+        except ValueError:
+            print(f"Cannot send {tx_buffer} through uart")
         
 lora = Lora(constants.LORA_COM_PORT)

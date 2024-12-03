@@ -1,58 +1,54 @@
 from construct import Struct, Float32l, Int8ub, Int16ub
-import mqtt_controller
 import time
-import json
 
-OPCODE_LOCATION = 0
-OPCODE_STATE = 1
+import mqtt_controller
+from lora import lora
+from cow_controler import cows_dict, cows_mutex
 
-struct_location = Struct (
-    "opcode" / Int8ub,
-    "address" / Int16ub,
+struct_lora_recv = Struct (
+    "cow_addr" / Int16ub,
+    "latitude" / Float32l,
     "longitude" / Float32l,
-    "latitude" / Float32l
+    "status" / Int8ub
 )
 
-struct_state = Struct (
-    "opcode" / Int8ub,
-    "address" / Int16ub,
-    "state" / Int8ub,
-)
+def handle_lora_msg(msg: bytes) -> bool:
+    lora_recv_frame = struct_lora_recv.parse(msg)
+    
+    cow_id = None
+    # Find cow id by cow_addr
+    for key in cows_dict.keys():
+        if cows_dict[key].cow_addr == lora_recv_frame.cow_addr:
+            cow_id = key
 
-def handle_lora_msg(msg: bytes):
-    opcode = msg[0]
-    if(opcode == OPCODE_LOCATION):
-        location_frame = struct_location.parse(msg)
+    if(cow_id != None):
+        mqtt_controller.send_cow_infor(
+            cow_id=cow_id, 
+            longitude=lora_recv_frame.longitude, 
+            latitude=lora_recv_frame.latitude, 
+            cow_status=lora_recv_frame.status)
+    
+    
+def read_lora_data():
+    while(True):
+        lora.read()
+        if lora.cow_addr_is_waiting != 0:
+            lora.sending_timeout -= 10
+            if(lora.sending_timeout <= 0):
+                # Raise timeout error
+                print(f"cow {lora.cow_addr_is_waiting} timeout")
 
-        json_obj = dict()
-        json_obj['opcode'] = location_frame.opcode
-        json_obj['address'] = location_frame.address
-        json_obj['longitude'] = location_frame.longitude
-        json_obj['latitude'] = location_frame.latitude
+                lora.cow_addr_is_waiting = 0
+        time.sleep(0.01) # 10ms
 
-        mqtt_controller.publish_mqtt_msg(json.dumps(json_obj))
 
-    elif(opcode == OPCODE_STATE):
-        state_frame = struct_state.parse(msg)
+def send_lora_data():
+    while True:
+        cow_addrs = [cow.cow_addr for cow in cows_dict.values()]
+        for cow_addr in cow_addrs:
+            lora.send_lora_msg(cow_addr, 1)
 
-        json_obj = dict()
-        json_obj['opcode'] = state_frame.opcode
-        json_obj['address'] = state_frame.address
-        json_obj['state'] = state_frame.state
-        
-        mqtt_controller.publish_mqtt_msg(json.dumps(json_obj))
-
-    else:
-        print(f"Opcode {opcode} invalid")
-
-if __name__ == '__main__':
-    opcode = bytes([0])
-    address = bytes([0, 5])
-    kinh_do = b'\xc3\xf5H@'
-    vi_do = b'\x91\xed\xe4@'
-
-    a = opcode + address + kinh_do + vi_do
-
-    while(1):
-        time.sleep(10)
-        handle_lora_msg(a)
+            # Waiting for read response or timeout
+            while lora.cow_addr_is_waiting != 0:
+                pass
+        time.sleep(5)
