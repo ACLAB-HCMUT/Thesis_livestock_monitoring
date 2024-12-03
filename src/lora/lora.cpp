@@ -40,7 +40,9 @@ int init_lora()
 
 void lora_write(uint8_t* data, int length)
 {
-	uart_tx(uart_dev, data, length, 10);
+	for(uint8_t i = 0; i < length; i++){
+		uart_poll_out(uart_dev, data[i]);
+	}
 }
 
 int lora_read(uint8_t *data)
