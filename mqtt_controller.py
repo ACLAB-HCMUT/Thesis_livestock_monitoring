@@ -48,7 +48,7 @@ def handle_mqtt_msg(msg: str):
         cow_controler.add_cow(cowModel)
 
         # response ack to backend
-        publish_mqtt_msg(f"0{constants.HEADER_GATEWAY_ACK}")
+        publish_mqtt_msg(f"0{constants.HEADER_GATEWAY_ACK}{cowModel.cow_id}")
 
         print(f"After create cow: {cow_controler.cows_dict}")
     
@@ -121,31 +121,11 @@ def send_ack(ack: int):
     msg: str = f"0{constants.HEADER_GATEWAY_ACK}{ack}"
     publish_mqtt_msg(msg)
 
-def send_gps(cow_id: str, longitude: float, latitude: float):
-    """
-    This function will send gps information to backend
-    Params:
-        cow_id (str): ID of cow
-        longitude (float): longitude of gps
-        latitude (float): latitude of gps
-    """
-    msg: str = f"0{constants.HEADER_GATEWAY_SEND_GPS}" \
-                if constants.HEADER_GATEWAY_SEND_GPS < 10 \
-                else f"{constants.HEADER_GATEWAY_SEND_GPS}"
-    msg += f"{cow_id}:{longitude}:{latitude}"
-    publish_mqtt_msg(msg)
-
-def send_cow_status(cow_id: str, cow_status: int):
-    """
-    This function will send cow_status to backend
-    Params:
-        cow_id (str): ID of cow
-        cow_status (int): status of cow
-    """
-    msg: str = f"0{constants.HEADER_GATEWAY_SEND_COW_STATUS}" \
-                if constants.HEADER_GATEWAY_SEND_COW_STATUS < 10 \
-                else f"{constants.HEADER_GATEWAY_SEND_COW_STATUS}"
-    msg += f"{cow_id}:{cow_status}"
+def send_cow_infor(cow_id:str, longitude: float, latitude: float, cow_status):
+    msg: str = f"0{constants.HEADER_GATEWAY_SEND_COW_INFOR}" \
+                if constants.HEADER_GATEWAY_SEND_COW_INFOR < 10 \
+                else f"{constants.HEADER_GATEWAY_SEND_COW_INFOR}"
+    msg += f"{cow_id}:{longitude}:{latitude}:{cow_status}"
     publish_mqtt_msg(msg)
 
 def get_safe_zones():
@@ -158,16 +138,3 @@ def get_safe_zones():
                 else f"{constants.HEADER_GATEWAY_REQUEST_SAFE_ZONES}"
     publish_mqtt_msg(msg)
 
-if __name__ == "__main__":
-    
-    # time.sleep(5)
-    # get_all_cows()
-    # base_longitude = 10.88
-    # base_latitude = 106.80
-    time.sleep(5)
-    get_safe_zones()
-    while True:
-        time.sleep(5)
-        # denta_longitude = random.uniform(-0.001, 0.001)
-        # denta_latitude = random.uniform(-0.001, 0.001)
-        # send_gps("6727ac687dcc5bda70635f5d", base_longitude + denta_longitude, base_latitude + denta_latitude)
