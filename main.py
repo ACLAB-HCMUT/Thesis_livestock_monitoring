@@ -1,18 +1,25 @@
-import lora
 import time
+import threading
+
+import lora_controller
+import mqtt_controller
 
 
 if __name__ == "__main__":
-    count: int = 5000
-    while True:
-        lora.lora.read()
-        if count >= 0:
-            count -= 10
-            if count <= 0:
-                count = 5000
-                lora.lora.get_addr()
-        
-        time.sleep(0.01)
+    time.sleep(3)
+    mqtt_controller.get_all_cows()
+    time.sleep(3)
+    mqtt_controller.get_safe_zones()
+    time.sleep(3)
+
+    read_lora_data_thread = threading.Thread(target=lora_controller.read_lora_data)
+    send_lora_data_thread = threading.Thread(target=lora_controller.send_lora_data)
+
+    read_lora_data_thread.start()
+    send_lora_data_thread.start()
+
+    read_lora_data_thread.join()
+    send_lora_data_thread.join()
         
 
         
