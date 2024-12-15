@@ -7,6 +7,7 @@ import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
 import 'package:do_an_app/pages/map_libre_page.dart';
 import 'package:do_an_app/pages/splash_screen.dart';
+import 'package:do_an_app/services/user_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -17,6 +18,7 @@ import 'controllers/mqtt_controller/mqtt_bloc.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.instance.getToken().then((value) {

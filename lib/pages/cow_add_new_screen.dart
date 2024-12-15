@@ -52,13 +52,15 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
             _isLoading = false; // Tắt overlay loading
           });
           if (state is CowLoaded) {
-            showTopSnackBar(context, "Cow created successfully!", Colors.green.shade300);
+            showTopSnackBar(
+                context, "Cow created successfully!", Colors.green.shade300);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => CowListScreen()),
             );
           } else if (state is CowError) {
-            showTopSnackBar(context, "'Failed to create cow: ${state.message}'", Colors.red.shade500);
+            showTopSnackBar(context, "'Failed to create cow: ${state.message}'",
+                Colors.red.shade500);
           }
         }
       },
@@ -181,10 +183,62 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
                           SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () {
+                              if (_nameController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Vui lòng nhập tên con bò.'),
+                                    backgroundColor: Colors.red.shade300,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: EdgeInsets.fromLTRB(16, 0, 16, 10),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (_ageController.text.isEmpty ||
+                                  int.tryParse(_ageController.text) == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Vui lòng nhập tuổi hợp lệ.'),
+                                    backgroundColor: Colors.red.shade300,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: EdgeInsets.fromLTRB(16, 0, 16, 70),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (_weightController.text.isEmpty ||
+                                  int.tryParse(_weightController.text) ==
+                                      null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Vui lòng nhập cân nặng hợp lệ.'),
+                                    backgroundColor: Colors.red.shade300,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: EdgeInsets.fromLTRB(16, 0, 16, 70),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (_selectedSafeZoneId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Vui lòng chọn vùng an toàn.'),
+                                    backgroundColor: Colors.red.shade300,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: EdgeInsets.fromLTRB(16, 0, 16, 70),
+                                  ),
+                                );
+                                return;
+                              }
                               context.read<CowBloc>().add(CreateCowEvent(
                                   cow_addr: -1,
                                   name: _nameController.text,
-                                  username: (context.read<UserBloc>().state as UserLoaded).user.username,
+                                  username: (context.read<UserBloc>().state
+                                          as UserLoaded)
+                                      .user
+                                      .username,
                                   age: int.tryParse(_ageController.text),
                                   weight: int.tryParse(_weightController.text),
                                   isMale: _isMale,
@@ -301,12 +355,12 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
   }
 
   void showTopSnackBar(BuildContext context, String message, Color color) {
-    final overlay = Overlay.of(context); 
+    final overlay = Overlay.of(context);
     late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        top: 100.0, 
+        top: 100.0,
         left: MediaQuery.of(context).size.width * 0.1,
         right: MediaQuery.of(context).size.width * 0.1,
         child: Material(
@@ -314,7 +368,7 @@ class _CowUpdateScreenState extends State<CowAddNewScreen> {
           child: Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: color, 
+              color: color,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
