@@ -95,8 +95,6 @@ Future<UserModel?> getUserByUsername(String username) async {
 }   
 
 
-
-
 Future<int?> getAndIncrementGlobalAddress(
   String? username,
 ) async {
