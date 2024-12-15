@@ -4,8 +4,11 @@ import 'dart:async';
 
 import 'package:do_an_app/controllers/ble_controller/ble_bloc.dart';
 import 'package:do_an_app/controllers/ble_controller/ble_event.dart';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
+import 'package:do_an_app/services/user_service.dart';
 import 'package:do_an_app/utils/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BluetoothScanScreen extends StatefulWidget {
@@ -166,30 +169,33 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
                             onPressed: () async {
                               bool write_result = true;
                               /* Call serivce to get global address of cow */
-
-                              int global_addr = 40000;
-                              /* Find service write cow addr */
-                              List<BluetoothService> services = await device.discoverServices();
-                              for(final service in services){
-                                if(service.serviceUuid.toString() != "63bf0b19-2b9c-473c-9e0a-2cfcaf03a770"){
-                                  continue;
-                                }
-                                List<BluetoothCharacteristic> characteristics = service.characteristics;
-                                for(final characteristic in characteristics){
-                                  if(characteristic.characteristicUuid.toString() != "63bf0b19-2b9c-473c-9e0a-2cfcaf03a771"){
+                              String username =   (context.read<UserBloc>().state as UserLoaded).user.username ?? "";
+                              int? global_addr = await getAndIncrementGlobalAddress(username);
+                              if(global_addr == null){
+                                write_result = false;
+                              }else{
+                                /* Find service write cow addr */
+                                List<BluetoothService> services = await device.discoverServices();
+                                for(final service in services){
+                                  if(service.serviceUuid.toString() != "63bf0b19-2b9c-473c-9e0a-2cfcaf03a770"){
                                     continue;
                                   }
-                                  global_addr = (global_addr + 1) % (0xffff);
-                                  try {
-                                    await characteristic.write([global_addr & 0xff, (global_addr >> 8) & 0xff]);
-                                  }catch(e) {
-                                    print('Write failed: $e');
-                                    write_result = false;
-                                  }
-                                } 
+                                  List<BluetoothCharacteristic> characteristics = service.characteristics;
+                                  for(final characteristic in characteristics){
+                                    if(characteristic.characteristicUuid.toString() != "63bf0b19-2b9c-473c-9e0a-2cfcaf03a771"){
+                                      continue;
+                                    }
+                                    
+                                    try {
+                                      await characteristic.write([global_addr & 0xff, (global_addr >> 8) & 0xff]);
+                                    }catch(e) {
+                                      print('Write failed: $e');
+                                      write_result = false;
+                                    }
+                                  } 
+                                }
                               }
                               /* Call service to config address */
-
                               await device.disconnect();
                               Navigator.of(context).pop();
                               if(write_result == false) {

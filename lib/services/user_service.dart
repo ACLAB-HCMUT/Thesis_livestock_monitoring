@@ -93,3 +93,28 @@ Future<UserModel?> getUserByUsername(String username) async {
     return null;
   }
 }   
+
+
+Future<int?> getAndIncrementGlobalAddress(
+  String? username,
+) async {
+  try {
+    var url = Uri.http(serverUrl, '/user/global-address/$username');
+    var res = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (res.statusCode == 200) {
+      var responseBody  = jsonDecode(res.body);
+      return responseBody['global_address']; 
+    } else {
+      print("getAndIncrementGlobalAddress failed, status code: ${res.statusCode}");
+      return null;
+    }
+  } catch (err) {
+    print("getAndIncrementGlobalAddress failed, error: $err");
+    return null;
+  }
+}
