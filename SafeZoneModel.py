@@ -24,9 +24,10 @@ def is_point_in_polygon(point: Point, polygon: list[Point]):
     return winding_number != 0
 
 class SafeZoneModel:
-    def __init__(self, safe_zone_id: str, safe_zone_points: list[Point]):
+    def __init__(self, safe_zone_id: str, safe_zone_points: list[Point], sequentialId: str):
         self.safe_zone_id = safe_zone_id
         self.safe_zone_points = safe_zone_points
+        self.sequentialId = sequentialId
 
     def is_point_in_safe_zone(self, point: Point):
         return is_point_in_polygon(point, self.safe_zone_points)

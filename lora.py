@@ -12,9 +12,6 @@ class Lora:
 
     """
 
-    GET_REGISTER_COMMAND = 0xC1
-    SET_REGISTER_COMMAND = 0xC0
-
     def __init__(self, lora_port: str):
         # check lora_port is variable
         # TODO
@@ -31,40 +28,6 @@ class Lora:
         self.sending_timeout = 0
         self.cow_addr_is_waiting = 0
 
-    def send_command(self, command: int, addr: int, length: int, param: list):
-        tx_buffer = [command, addr, length]
-
-        if(command == self.SET_REGISTER_COMMAND):
-            for i in range(length):
-                tx_buffer.append(param[i])
-
-        self.send_buffer(tx_buffer)
-    
-    def config_addr(self, addr: int):
-
-        addr_bytes: list = [0x00] * 2
-        addr_bytes[0] = addr >> 8
-        addr_bytes[1] = addr & 0xff
-
-        self.send_command(self.GET_REGISTER_COMMAND, 0x00, 2, addr_bytes)
-
-    def config_channel(self, channel: int):
-
-        self.send_command(self.GET_REGISTER_COMMAND, 0x04, 1, [channel])
-    
-    def config_key(self, key: int):
-        
-        key_bytes: list = [0x00] * 2
-        key_bytes[0] = key >> 8
-        key_bytes[1] = key & 0xff
-
-        self.send_command(self.SET_REGISTER_COMMAND, 0x06, 2, key_bytes)
-    
-    def get_addr(self):
-        self.send_command(self.GET_REGISTER_COMMAND, 0x00, 2, None)
-        
-    def get_channel(self):
-        self.send_command(self.GET_REGISTER_COMMAND, 0x04, 2, None)
     
     def read(self):
         """
@@ -100,7 +63,6 @@ class Lora:
     
     def get_cow_addr(self, msg: bytes):
         return (msg[0] << 8) | msg[1]
-        
     
     def send_lora_msg(self, addr: int, opcode: int):
         tx_buffer: list = []

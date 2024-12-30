@@ -1,18 +1,39 @@
-from construct import Struct, Int8ub, Int32ub, Float32b
+import threading
+import time
 
-temp_format = Struct(
-    "opcode" / Int8ub,
-    "kinh_do" / Int32ub,
-    "kinh_do_thuc" / Int32ub,
-    "vi_do_nguyen" / Int32ub,
-    "vi_do_thuc" / Int32ub
-)
+# Dictionary chia sẻ
+shared_dict = {}
+# Tạo một mutex để đồng bộ hóa
+mutex = threading.Lock()
 
-bytes_ex = bytes([0x00, 
-            0x00, 0x00, 0x00, 32, 0x00, 0x00, 0x00, 65, 
-            0x00, 0x00, 0x00, 112, 0x00, 0x00, 0x00, 94])
+# Thread đọc dữ liệu từ dictionary
+def read_dict():
+    while True:
+        with mutex:  # Bảo vệ dictionary bằng mutex
+            for key, value in shared_dict.items():
+                print(f"Read key={key}, value={value}")
+                time.sleep(5)
+        time.sleep(1)  # Giả lập thời gian xử lý
 
+# Thread thêm/xóa dữ liệu trong dictionary
+def modify_dict():
+    for i in range(10):
+        with mutex:  # Bảo vệ dictionary bằng mutex
+            shared_dict[i] = f"value_{i}"
+            print(f"Added key={i}, value=value_{i}")
+        time.sleep(0.5)  # Giả lập thời gian thêm
+        with mutex:  # Xóa key từ dictionary
+            if i in shared_dict:
+                del shared_dict[i]
+                print(f"Deleted key={i}")
+        time.sleep(0.5)
 
-temp_struct = temp_format.parse(bytes_ex)
+# Tạo và khởi động các thread
+reader_thread = threading.Thread(target=read_dict)
+modifier_thread = threading.Thread(target=modify_dict)
 
-print(temp_struct.kinh_do_nguyen)
+reader_thread.start()
+modifier_thread.start()
+
+reader_thread.join()
+modifier_thread.join()

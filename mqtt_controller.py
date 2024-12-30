@@ -1,13 +1,11 @@
 import mqtt_client_helper
 import constants
-import time
 import json
-import random
 
-import CowModel
+from CowModel import CowModel
 import cow_controler
 
-import SafeZoneModel
+from SafeZoneModel import SafeZoneModel, Point
 import safe_zone_controller
 
 def get_header(msg: str) -> int:
@@ -30,7 +28,19 @@ def handle_mqtt_msg(msg: str):
         data_list = json.loads(cows_data)
         
         for cow_dict in data_list:
-            cowModel: CowModel.CowModel = CowModel.CowModel(cow_id=cow_dict['_id'], cow_addr=cow_dict['cow_addr'])
+            cow_addr: str | None = None
+            safe_zone_id: str | None = None
+
+            if("cow_addr" in cow_dict):
+                cow_addr = cow_dict['cow_addr']
+            if("safeZoneId" in cow_dict):
+                safe_zone_id = cow_dict['safeZoneId']
+            
+            cowModel: CowModel = \
+                CowModel(cow_id=cow_dict['_id'], 
+                         cow_addr=cow_addr,
+                         safe_zone_id=safe_zone_id
+                         )
             cow_controler.add_cow(cowModel=cowModel)
         
         print(f"After get all cows: {cow_controler.cows_dict}")
@@ -74,17 +84,18 @@ def handle_mqtt_msg(msg: str):
         # print(data_list)
         for safe_zone_dict in data_list:
             safe_zone_id: str = safe_zone_dict['_id']
+            safe_zone_sequentialId: str = safe_zone_dict['sequentialId']
             safe_zone_points: list = []
 
             for point in safe_zone_dict['safeZone']:
-                point: SafeZoneModel.Point = SafeZoneModel.Point(point['longitude'], point['latitude'])
+                point: Point = Point(point['longitude'], point['latitude'])
                 safe_zone_points.append(point)
             
-            safeZoneModel: SafeZoneModel.SafeZoneModel = \
-                SafeZoneModel.SafeZoneModel(safe_zone_id, safe_zone_points)
+            safeZoneModel: SafeZoneModel = \
+                SafeZoneModel(safe_zone_id, safe_zone_points, safe_zone_sequentialId)
             safe_zone_controller.add_safe_zone(safeZoneModel)
         
-        print(safe_zone_controller.safe_zones_dict)
+        print("After get all safeZones: ", safe_zone_controller.safe_zones_dict)
         
     else:
         print(f"Header is invalid, header = {header}")
@@ -121,12 +132,20 @@ def send_ack(ack: int):
     msg: str = f"0{constants.HEADER_GATEWAY_ACK}{ack}"
     publish_mqtt_msg(msg)
 
-def send_cow_infor(cow_id:str, longitude: float, latitude: float, cow_status):
+def send_cow_infor(cow_id:str, longitude: float, latitude: float, is_out_of_safe_zone: int):
     msg: str = f"0{constants.HEADER_GATEWAY_SEND_COW_INFOR}" \
                 if constants.HEADER_GATEWAY_SEND_COW_INFOR < 10 \
                 else f"{constants.HEADER_GATEWAY_SEND_COW_INFOR}"
-    msg += f"{cow_id}:{longitude}:{latitude}:{cow_status}"
+    msg += f"{cow_id}:{longitude}:{latitude}:{is_out_of_safe_zone}"
     publish_mqtt_msg(msg)
+
+def send_error(cow_id: str, error_code: int):
+    msg: str = f"0{constants.HEADER_GATEWAY_SEND_ERROR}" \
+                if constants.HEADER_GATEWAY_SEND_ERROR < 10 \
+                else f"{constants.HEADER_GATEWAY_SEND_ERROR}"
+    msg += f"{cow_id}:{error_code}"
+    publish_mqtt_msg(msg)
+
 
 def get_safe_zones():
     """
