@@ -99,13 +99,14 @@ const updateCowStatusById = async (cowId, new_status) => {
 const updateCowAddressById = async (cowId, address) => {
   const updatedCow = await CowModel.findById(cowId);
   if (updatedCow) {
-    updatedCow.address = address;
+    updatedCow.cow_addr = address;
     await updatedCow.save();
     return updatedCow;
   } else {
     return undefined;
   }
 };
+
 
 export default {
     getAllCows,

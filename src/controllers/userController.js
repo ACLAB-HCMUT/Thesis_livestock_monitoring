@@ -1,3 +1,4 @@
+import cowService from "../services/cowService.js";
 import userService from "../services/userService.js";
 
 const postUser = async (req, res) => {
@@ -39,8 +40,8 @@ export const getAndIncrementGlobalAddress = async (req, res) => {
   try {
     const username = req.params.username;
     const updatedUser = await userService.incrementGlobalAddress(username);
-
-    if (updatedUser) {
+    const updatedCow = await cowService.updateCowAddressById(req.body.cowId, updatedUser.global_address - 1);
+    if (updatedUser && updatedCow) {
       return res.status(200).json({
         global_address: updatedUser.global_address - 1,
       });

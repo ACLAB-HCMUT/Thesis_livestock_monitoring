@@ -46,49 +46,49 @@ function isLeft(x1, y1, x2, y2, x, y) {
 }
 
 async function sendPushNotification(change) {
-  if(change.operationType === "delete" || change.operationType === "insert" ){
-    return;
-  } 
-  const { updatedFields } = change.updateDescription;
-  if (updatedFields.latest_latitude || updatedFields.latest_longitude) {
-    const cow = await CowModel.findById(change.documentKey._id.toString());
-    const newLocation = {
-      latitude: cow.latest_latitude,
-      longitude: cow.latest_longitude
-    };
-    const checkLocation = await pointInSafeZone(newLocation);
-    if (!checkLocation && !cow.missing) {
-      cow.missing = true;
-      await CowModel.findByIdAndUpdate(
-        change.documentKey._id.toString(), { $set: cow }, { new: true }
-      );
-      const message = {
-        notification: {
-          title: "Cattle Out of Safe Zone",
-          body: `Cow with ID ${change.documentKey._id.toString()} has exited the safe zone!`
-        },
-        data: {
-          type: change.operationType,
-          cowId: change.documentKey._id.toString(),
-          timestamp: new Date().toISOString()
-        },
-        token: "c0qLFnbHRUWkScleszQcKO:APA91bEE3kQyYQjnrfj7PtiAq4yGnsnxw-ovx2RKVnYZrlebA_ki_157MfHTBRde8fw455dh2oiWCPPRNqX0SseYg_HSqj3dJwvL-keFQFVJahnq34MUy7I"
-      };
+  // if(change.operationType === "delete" || change.operationType === "insert" ){
+  //   return;
+  // } 
+  // const { updatedFields } = change.updateDescription;
+  // if (updatedFields.latest_latitude || updatedFields.latest_longitude) {
+  //   const cow = await CowModel.findById(change.documentKey._id.toString());
+  //   const newLocation = {
+  //     latitude: cow.latest_latitude,
+  //     longitude: cow.latest_longitude
+  //   };
+  //   const checkLocation = await pointInSafeZone(newLocation);
+  //   if (!checkLocation && !cow.missing) {
+  //     cow.missing = true;
+  //     await CowModel.findByIdAndUpdate(
+  //       change.documentKey._id.toString(), { $set: cow }, { new: true }
+  //     );
+  //     const message = {
+  //       notification: {
+  //         title: "Cattle Out of Safe Zone",
+  //         body: `Cow with ID ${change.documentKey._id.toString()} has exited the safe zone!`
+  //       },
+  //       data: {
+  //         type: change.operationType,
+  //         cowId: change.documentKey._id.toString(),
+  //         timestamp: new Date().toISOString()
+  //       },
+  //       token: "cqww-2YiQoGB3KoMJX0AIM:APA91bHxtYJnIUQBFtoXmBbDpnavh4GAezrsG1_Q0kM_6SR9S4-QilURc7ZCDuZn4-tcCyoiC_EYp1-J2ObidfyBuluSvF6VNHKKcGyPUoXmcWkniJ9gous"
+  //     };
 
-      FCM.send(message, function (err, resp) {
-        if (err) {
-          console.error("Error sending notification:", err);
-        } else {
-          console.log("Notification sent successfully:", resp);
-        }
-      });
-    } else if (checkLocation && cow.missing) {
-      cow.missing = false;
-      await CowModel.findByIdAndUpdate(
-        change.documentKey._id.toString(), { $set: cow }, { new: true }
-      );
-    }
-  }
+  //     FCM.send(message, function (err, resp) {
+  //       if (err) {
+  //         console.error("Error sending notification:", err);
+  //       } else {
+  //         console.log("Notification sent successfully:", resp);
+  //       }
+  //     });
+  //   } else if (checkLocation && cow.missing) {
+  //     cow.missing = false;
+  //     await CowModel.findByIdAndUpdate(
+  //       change.documentKey._id.toString(), { $set: cow }, { new: true }
+  //     );
+  //   }
+  // }
 }
 
 export function initCowChangeStream(server) {
