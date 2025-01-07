@@ -97,11 +97,16 @@ Future<UserModel?> getUserByUsername(String username) async {
 
 Future<int?> getAndIncrementGlobalAddress(
   String? username,
+  String? cowId
 ) async {
   try {
     var url = Uri.http(serverUrl, '/user/global-address/$username');
+    var body = {
+      if (cowId != null) 'cowId': cowId,
+    };
     var res = await http.put(
       url,
+      body: jsonEncode(body),
       headers: {
         'Content-Type': 'application/json',
       },

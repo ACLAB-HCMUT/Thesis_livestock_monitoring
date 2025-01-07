@@ -248,57 +248,60 @@ class CowDetailScreen extends StatelessWidget {
                 IconButton(
                     icon: Icon(Icons.settings, color: Colors.white),
                     onPressed: () async {
-                      BluetoothAdapterState currentState =
-                          await FlutterBluePlus.adapterState.first;
+                      final cowState = context.read<CowBloc>().state;
+                      if (cowState is CowLoaded) {
+                        BluetoothAdapterState currentState =
+                            await FlutterBluePlus.adapterState.first;
 
-                      if (currentState == BluetoothAdapterState.on) {
-                        // If Bluetooth is already on, navigate to the scan screen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BluetoothScanScreen()),
-                        );
-                      } else {
-                        // If Bluetooth is off, show the dialog to prompt the user
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(
-                                'Bạn có muốn bật Bluetooth',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: "IndieFlower",
-                                  fontWeight: FontWeight.bold,
+                        if (currentState == BluetoothAdapterState.on) {
+                          // If Bluetooth is already on, navigate to the scan screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BluetoothScanScreen()),
+                          );
+                        } else {
+                          // If Bluetooth is off, show the dialog to prompt the user
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Bạn có muốn bật Bluetooth',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: "IndieFlower",
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: Text("Xác nhận"),
-                                  onPressed: () async {
-                                    try {
-                                      if (Platform.isAndroid) {
-                                        // Turn on Bluetooth
-                                        await FlutterBluePlus.turnOn();
-                                        Navigator.of(context).pop();
+                                actions: [
+                                  TextButton(
+                                    child: Text("Xác nhận"),
+                                    onPressed: () async {
+                                      try {
+                                        if (Platform.isAndroid) {
+                                          // Turn on Bluetooth
+                                          await FlutterBluePlus.turnOn();
+                                          Navigator.of(context).pop();
+                                        }
+                                      } catch (e) {
+                                        // Handle errors if Bluetooth cannot be turned on
+                                        print("Error Turning On Bluetooth: $e");
                                       }
-                                    } catch (e) {
-                                      // Handle errors if Bluetooth cannot be turned on
-                                      print("Error Turning On Bluetooth: $e");
-                                    }
-                                  },
-                                ),
-                                TextButton(
-                                  child: Text("Hủy"),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              ],
-                            );
-                          },
-                        );
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("Hủy"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        }
                       }
                     }),
               ],

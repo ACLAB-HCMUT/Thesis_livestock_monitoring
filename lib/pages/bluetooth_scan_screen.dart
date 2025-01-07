@@ -4,6 +4,8 @@ import 'dart:async';
 
 import 'package:do_an_app/controllers/ble_controller/ble_bloc.dart';
 import 'package:do_an_app/controllers/ble_controller/ble_event.dart';
+import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
+import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/services/user_service.dart';
 import 'package:do_an_app/utils/snackbar.dart';
@@ -170,7 +172,9 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
                               bool write_result = true;
                               /* Call serivce to get global address of cow */
                               String username =   (context.read<UserBloc>().state as UserLoaded).user.username ?? "";
-                              int? global_addr = await getAndIncrementGlobalAddress(username);
+                              String? cowId = (context.read<CowBloc>().state as CowLoaded).cow.id;
+
+                              int? global_addr = await getAndIncrementGlobalAddress(username, cowId);
                               if(global_addr == null){
                                 write_result = false;
                               }else{
@@ -188,6 +192,7 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
                                     
                                     try {
                                       await characteristic.write([global_addr & 0xff, (global_addr >> 8) & 0xff]);
+                                      
                                     }catch(e) {
                                       print('Write failed: $e');
                                       write_result = false;
@@ -195,7 +200,7 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
                                   } 
                                 }
                               }
-                              /* Call service to config address */
+                              
                               await device.disconnect();
                               Navigator.of(context).pop();
                               if(write_result == false) {
@@ -210,7 +215,20 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
                                           fontFamily: "IndieFlower",
                                         ),
                                       )));
+                              }else{
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                          title: Text(
+                                        "Thành công",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: "IndieFlower",
+                                        ),
+                                      )));
                               }
+
                             },
                           ),
                           TextButton(

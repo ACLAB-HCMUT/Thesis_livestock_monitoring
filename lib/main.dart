@@ -7,18 +7,19 @@ import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/pages/custom_dashboard.dart';
 import 'package:do_an_app/pages/map_libre_page.dart';
 import 'package:do_an_app/pages/splash_screen.dart';
-import 'package:do_an_app/services/user_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'controllers/mqtt_controller/mqtt_bloc.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.instance.getToken().then((value) {
@@ -30,8 +31,46 @@ void main() async {
   });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessageBackgroundHandler);
 
+  // Cấu hình Local Notification
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      // Xử lý khi nhấn vào Local Notification (foreground)
+      if (response.payload != null) {
+        handleNotificationClick(response.payload!);
+      }
+    },
+  );
+
+  // Lắng nghe thông báo khi ứng dụng đang mở (foreground)
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("Foreground Notification: ${message.notification?.title}");
+
+    // Hiển thị thông báo cục bộ
+    _showLocalNotification(message);
+  });
+
+
   runApp(const MyApp());
 }
+
+/// Xử lý khi nhấn vào thông báo
+void handleNotificationClick(String cowId) {
+  final context = navigatorKey.currentState?.context;
+  if (context != null) {
+    context.read<CowBloc>().add(GetCowByIdEvent(cowId));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MapLibrePage()),
+    );
+  }
+}
+
 
 void handleInitialMessage(RemoteMessage? message) {
   if (message != null) {
@@ -49,6 +88,29 @@ void handleInitialMessage(RemoteMessage? message) {
       );
     }
   }
+}
+
+/// Hiển thị thông báo cục bộ khi ở foreground
+Future<void> _showLocalNotification(RemoteMessage message) async {
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    'default_channel', // ID của kênh thông báo
+    'Default Notifications', // Tên của kênh
+    channelDescription: 'Channel for foreground notifications',
+    importance: Importance.max,
+    priority: Priority.high,
+  );
+
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  await flutterLocalNotificationsPlugin.show(
+    0, // ID thông báo
+    message.notification?.title ?? 'No Title', // Tiêu đề thông báo
+    message.notification?.body ?? 'No Body', // Nội dung thông báo
+    platformChannelSpecifics,
+    payload: message.data['cowId'], // Truyền cowId qua payload
+  );
 }
 
 Future<void> _firebaseMessageBackgroundHandler(RemoteMessage message) async {
