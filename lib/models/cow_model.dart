@@ -14,6 +14,7 @@ class CowModel {
   int? weight;
   String? groupId;
   String? status;
+  String? note;
   String? timestamp;
   CowModel(
       {required this.id,
@@ -31,6 +32,7 @@ class CowModel {
       required this.weight,
       required this.groupId,
       required this.status,
+      required this.note,
       required this.timestamp});
 
   Map<String, dynamic> toJson() {
@@ -50,6 +52,7 @@ class CowModel {
       'weight': weight,
       'groupId': groupId,
       'status': status,
+      'note': note,
       'timestamp': timestamp,
     }..removeWhere((key, value) => value == null);
   }
@@ -74,6 +77,7 @@ class CowModel {
       sex: json['sex'],
       weight: json['weight'],
       status: json['status'],
+      note: json['note'],
       groupId: json['groupId'],
       timestamp: json.containsKey('timestamp') ? json['timestamp'] : null,
     );
@@ -94,9 +98,10 @@ class CowModel {
     int? weight,
     String? groupId,
     String? status,
+    String? note,
     String? timestamp,
   }) {
-    return CowModel(id: id??this.id, name: name ?? this.name, cowAddr: cowAddr?? this.cowAddr, username: username ?? this.username, latestLatitude: latestLatitude ?? this.latestLatitude, latestLongitude: latestLongitude ?? this.latestLongitude, medicated: medicated ?? this.medicated, sick: sick ?? this.sick, pregnant: pregnant ?? this.pregnant, missing: missing ?? this.missing, age: age ?? this.age, sex: sex ?? this.sex, weight: weight ?? this.weight, groupId: groupId ?? this.groupId, status: status ?? this.status, timestamp: timestamp ?? this.timestamp);
+    return CowModel(id: id??this.id, name: name ?? this.name, cowAddr: cowAddr?? this.cowAddr, username: username ?? this.username, latestLatitude: latestLatitude ?? this.latestLatitude, latestLongitude: latestLongitude ?? this.latestLongitude, medicated: medicated ?? this.medicated, sick: sick ?? this.sick, pregnant: pregnant ?? this.pregnant, missing: missing ?? this.missing, age: age ?? this.age, sex: sex ?? this.sex, weight: weight ?? this.weight, groupId: groupId ?? this.groupId, status: status ?? this.status, note: note ?? this.note, timestamp: timestamp ?? this.timestamp);
   }
 
   void showCowModel() {
@@ -116,5 +121,6 @@ class CowModel {
     print('groupId: ${groupId}');
     print('Timestamp: ${timestamp ?? "Not available"}');
     print('status: ${status}');
+    print('note: ${note}');
   }
 }

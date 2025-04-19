@@ -1,5 +1,4 @@
 import 'package:do_an_app/screens/cow_analytic_screen/cow_analytic_screen.dart';
-import 'package:do_an_app/screens/cow_detail_screen/utils/bluetooth_utils.dart';
 import 'package:do_an_app/screens/cow_statistic_screen/cow_statistic_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

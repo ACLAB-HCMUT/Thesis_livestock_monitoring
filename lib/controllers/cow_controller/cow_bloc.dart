@@ -17,6 +17,7 @@ class CowBloc extends Bloc<CowEvent, CowState> {
     on<DeleteCowByIdEvent>(_onDeleteCowById);
     on<GetAllCowEvent>(_onGetAllCow);
     on<UpdateCowFieldsEvent>(_onUpdateCowById);
+    on<UpdateCowNoteEvent>(_onUpdateCowNote);
     // no longer used, MQTT instead
     // Listen to real-time updates from cowService
     cowService.cowUpdates.listen((updatedCow) {
@@ -33,6 +34,24 @@ class CowBloc extends Bloc<CowEvent, CowState> {
         add(GetAllCowEvent());
       }
     });
+  }
+  Future<void> _onUpdateCowNote(
+      UpdateCowNoteEvent event, Emitter<CowState> emit) async {
+    emit(CowLoading());
+
+    try {
+      final updatedCow = await updateCowNote(
+          event.updatedNode,
+          event.cowId);
+      if (updatedCow != null) {
+        emit(CowLoaded(updatedCow));
+      } else {
+        emit(CowError("Update failed"));
+      }
+
+    } catch (error) {
+      emit(CowError('Failed to update cow'));
+    }
   }
   Future<void> _onUpdateCowById(
       UpdateCowFieldsEvent event, Emitter<CowState> emit) async {

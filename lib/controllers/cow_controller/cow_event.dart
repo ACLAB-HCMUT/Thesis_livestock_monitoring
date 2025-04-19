@@ -70,6 +70,13 @@ class CreateCowEvent extends CowEvent {
   List<Object?> get props =>
       [cow_addr, name, username, age, weight, isMale, groupId, cowAddress];
 }
+class UpdateCowNoteEvent extends CowEvent {
+  final String cowId;
+  final String updatedNode;
+
+  UpdateCowNoteEvent({required this.cowId, required this.updatedNode});
+
+}
 
 class GetAllCowEvent extends CowEvent {
   GetAllCowEvent();

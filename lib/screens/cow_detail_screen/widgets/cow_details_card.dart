@@ -1,3 +1,4 @@
+import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
 import 'package:do_an_app/screens/cow_location_screen/cow_location_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,9 +13,9 @@ class CowDetailsCard extends StatefulWidget {
 }
 
 class _CowDetailsCardState extends State<CowDetailsCard> {
-  final TextEditingController _noteController =
-      TextEditingController(text: "This is a placeholder note...");
+  TextEditingController? _noteController;
   bool _isEditing = false;
+  CowModel? _currentCow;
 
   @override
   Widget build(BuildContext context) {
@@ -72,59 +73,80 @@ class _CowDetailsCardState extends State<CowDetailsCard> {
               _buildInfoRow(
                   context, "Group Id", "groupId", Icons.location_city),
               const SizedBox(height: 30),
-              TextField(
-                controller: _noteController,
-                readOnly: !_isEditing,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: 'Cow Note',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  prefixIcon: const Icon(Icons.note_alt),
-                  filled: true,
-                  fillColor: _isEditing ? Colors.grey[100] : Colors.grey[200],
-                ),
-              ),
+              BlocBuilder<CowBloc, CowState>(builder: (context, state) {
+                if (state is CowLoading) {
+                  return const CircularProgressIndicator();
+                } else if (state is CowLoaded) {
+                  CowModel cow = state.cow;
+                  if (_noteController == null || _currentCow?.id != cow.id) {
+                    _noteController =
+                        TextEditingController(text: cow.note ?? "");
+                    _currentCow = cow;
+                  }
+                  return TextField(
+                    controller: _noteController,
+                    readOnly: !_isEditing,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      labelText: 'Cow Note',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      prefixIcon: const Icon(Icons.note_alt),
+                      filled: true,
+                      fillColor:
+                          _isEditing ? Colors.grey[100] : Colors.grey[200],
+                    ),
+                  );
+                }
+                return const CircularProgressIndicator();
+              }),
             ],
           ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _isEditing = !_isEditing;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[300],
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
-            ),
-            child: Text(
-              _isEditing ? "Save Note" : "Add Note",
-              style: const TextStyle(color: Colors.white),
-            ),
+          const SizedBox(
+            height: 20,
           ),
-          const SizedBox(height: 60),
-          ElevatedButton(
-            onPressed: () {
-              final cowState = context.read<CowBloc>().state;
-              if (cowState is CowLoaded) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CowLocationScreen(),
-                  ),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[300],
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-            ),
-            child: const Text(
-              "Open location",
-              style: TextStyle(color: Colors.white),
-            ),
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            buttonPadding: const EdgeInsets.symmetric(horizontal: 20),
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  if (_isEditing) {
+                    // Save the note
+                    final updatedNote = _noteController?.text ?? "";
+                    context.read<CowBloc>().add(UpdateCowNoteEvent(
+                          cowId: _currentCow!.id!,
+                          updatedNode: updatedNote,
+                        ));
+                  }
+                  setState(() {
+                    _isEditing = !_isEditing;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[300],
+                ),
+                child: Text(_isEditing ? "Save Note" : "Add Note"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final cowState = context.read<CowBloc>().state;
+                  if (cowState is CowLoaded) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CowLocationScreen(),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[300],
+                ),
+                child: const Text("Open Location"),
+              ),
+            ],
           ),
         ],
       ),

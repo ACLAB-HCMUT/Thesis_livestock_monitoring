@@ -85,7 +85,36 @@ Future<CowModel?> postCow(int? cow_addr, String? name, String? username,
     return null;
   }
 }
+Future<CowModel?> updateCowNote(
+    String updatedNode,
+    String cowId) async {
+  try {
+    var url = Uri.http(serverUrl, '/cow/updateNode');
+    // Build a map with only the non-null fields
+    var body = {
+      'updatedNode': updatedNode,
+      'cowId': cowId
+    };
+    var res = await http.put(
+      url,
+      body: jsonEncode(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (res.statusCode == 200) {
+      var bodyJson = jsonDecode(res.body);
 
+      return CowModel.fromJson(bodyJson);
+    } else {
+      print("updateCow failed, status code: ${res.statusCode}");
+      return null;
+    }
+  } catch (err) {
+    print("updateCow failed, error: $err");
+    return null;
+  }
+}
 Future<CowModel?> updateCowById(
     String username,
     String cowId,
