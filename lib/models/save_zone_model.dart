@@ -6,13 +6,13 @@ class SaveZoneModel {
   String? id;
   List<CoordinatePoint>? safeZone;
   String? username;
-  String? sequentialId;
+  String? groupId;
 
   SaveZoneModel({
     this.id,
     this.safeZone,
     this.username,
-    this.sequentialId
+    this.groupId
   });
 
   Map<String, dynamic> toMap() {
@@ -20,7 +20,7 @@ class SaveZoneModel {
       '_id': id,
       'safeZone': safeZone?.map((x) => x.toMap()).toList(),
       'username': username,
-      'sequentialId': sequentialId
+      'groupId': groupId
     };
   }
 
@@ -35,7 +35,7 @@ class SaveZoneModel {
             )
           : null,
       username: map['username'],
-      sequentialId : map['sequentialId']
+      groupId : map['groupId']
     );
   }
 

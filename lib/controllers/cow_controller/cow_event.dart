@@ -15,7 +15,8 @@ class UpdateCowFieldsEvent extends CowEvent {
   final bool? isSick;
   final bool? isPregnant;
   final bool? isMedicated;
-  final String? safeZoneId;
+  final String? groupId;
+  final int? cowAddress;
 
   UpdateCowFieldsEvent(
       {required this.username,
@@ -27,7 +28,8 @@ class UpdateCowFieldsEvent extends CowEvent {
       this.isSick,
       this.isPregnant,
       this.isMedicated,
-      this.safeZoneId});
+      this.groupId,
+      this.cowAddress});
 
   @override
   List<Object?> get props => [
@@ -40,7 +42,8 @@ class UpdateCowFieldsEvent extends CowEvent {
         isSick,
         isPregnant,
         isMedicated,
-        safeZoneId
+        groupId,
+        cowAddress
       ];
 }
 
@@ -51,7 +54,8 @@ class CreateCowEvent extends CowEvent {
   final int? age;
   final int? weight;
   final bool? isMale;
-  final String? safeZoneId;
+  final String? groupId;
+  final int? cowAddress;
   CreateCowEvent(
       {this.cow_addr,
       this.name,
@@ -59,11 +63,12 @@ class CreateCowEvent extends CowEvent {
       this.age,
       this.weight,
       this.isMale,
-      this.safeZoneId});
+      this.groupId,
+      this.cowAddress});
 
   @override
   List<Object?> get props =>
-      [cow_addr, name, username, age, weight, isMale, safeZoneId];
+      [cow_addr, name, username, age, weight, isMale, groupId, cowAddress];
 }
 
 class GetAllCowEvent extends CowEvent {

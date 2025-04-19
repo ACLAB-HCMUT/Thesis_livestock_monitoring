@@ -2,11 +2,15 @@
 
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
+import 'package:do_an_app/controllers/device_controller/device_bloc.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
 import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
-import 'package:do_an_app/pages/custom_dashboard.dart';
-import 'package:do_an_app/pages/map_libre_page.dart';
-import 'package:do_an_app/pages/splash_screen.dart';
+import 'package:do_an_app/screens/custom_dashboard_screen/custom_dashboard_screen.dart';
+import 'package:do_an_app/screens/cow_location_screen/cow_location_screen.dart';
+import 'package:do_an_app/screens/login_screen/login_screen.dart';
+import 'package:do_an_app/screens/register_screen/register_screen.dart';
+import 'package:do_an_app/screens/splash_screen.dart';
+import 'package:do_an_app/services/cowService.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -55,7 +59,6 @@ void main() async {
     _showLocalNotification(message);
   });
 
-
   runApp(const MyApp());
 }
 
@@ -66,7 +69,7 @@ void handleNotificationClick(String cowId) {
     context.read<CowBloc>().add(GetCowByIdEvent(cowId));
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MapLibrePage()),
+      MaterialPageRoute(builder: (context) => CowLocationScreen()),
     );
   }
 }
@@ -84,7 +87,7 @@ void handleInitialMessage(RemoteMessage? message) {
       context.read<CowBloc>().add(GetCowByIdEvent(cowId));
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MapLibrePage()),
+        MaterialPageRoute(builder: (context) => CowLocationScreen()),
       );
     }
   }
@@ -126,13 +129,16 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<CowBloc>(
-          create: (context) => CowBloc(),
+          create: (context) => CowBloc(CowService()),
         ),
         BlocProvider<SaveZoneBloc>(
           create: (context) => SaveZoneBloc(),
         ),
         BlocProvider<UserBloc>(
           create: (context) => UserBloc(),
+        ),
+        BlocProvider<DeviceBloc>(
+          create: (context) => DeviceBloc(),
         ),
       ],
       child: AppWithMQTT(),
@@ -156,7 +162,7 @@ class AppWithMQTT extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 115, 190, 191)),
         useMaterial3: true,
       ),
       navigatorKey: navigatorKey,
@@ -164,10 +170,13 @@ class AppWithMQTT extends StatelessWidget {
         cowBloc: context.read<CowBloc>(),
         saveZoneBloc: context.read<SaveZoneBloc>(),
       ), // Start with the SplashScreen
+      // home: LoginScreen(), 
       routes: {
         '/home': (context) =>
-            Scaffold(body: SafeArea(child: CustomDashboard())),
-        '/map': (context) => MapLibrePage(),
+            Scaffold(body: SafeArea(child: CustomDashboardScreen())),
+        '/map': (context) => CowLocationScreen(),
+        '/register' : (context) => RegisterScreen(),  
+        '/login' : (context) => LoginScreen()
       },
     );
   }

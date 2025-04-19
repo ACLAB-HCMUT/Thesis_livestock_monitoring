@@ -1,10 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:do_an_app/controllers/cow_controller/cow_event.dart';
-import 'package:do_an_app/controllers/cow_controller/cow_state.dart';
 import 'package:do_an_app/models/user_model.dart';
 import 'package:do_an_app/services/user_service.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 part 'user_event.dart';
 part 'user_state.dart';
@@ -14,6 +11,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<CreateUserEvent>(_onCreateUser);
     on<UpdateUserEvent>(_onUpdateUser);
     on<GetUserByUsernameEvent>(_onGetUserByUsername);
+    on<LoginUserEvent>(_onLoginUser);
+    on<LogoutUserEvent>(_onLogoutUser);
   }
   Future<void> _onCreateUser(
       CreateUserEvent event, Emitter<UserState> emit) async {
@@ -23,7 +22,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           event.username, event.password, event.fullname, event.global_address);
       emit(newUser != null
           ? UserLoaded(newUser)
-          : UserError("Failed to create user"));
+          : UserError("Failed to register user"));
     } catch (e) {
       emit(UserError(e.toString()));
     }
@@ -60,4 +59,22 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       emit(UserError(e.toString()));
     }
   }
+  Future<void> _onLoginUser(
+    LoginUserEvent event,
+    Emitter<UserState> emit
+  )async{
+    emit(UserLoading());
+    try{
+      UserModel? user = await LoginUser(event.username, event.password);
+      emit(user!=null ? UserLoaded(user) : UserError("User not found"));
+    }catch (e){
+      emit(UserError(e.toString()));
+    }
+  }
+}
+Future<void> _onLogoutUser(
+  LogoutUserEvent event,
+  Emitter<UserState> emit
+)async{
+  emit(UserLoading());
 }

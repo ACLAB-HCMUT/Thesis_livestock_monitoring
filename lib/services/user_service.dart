@@ -2,6 +2,37 @@ import 'dart:convert';
 import 'package:do_an_app/global.dart';
 import 'package:do_an_app/models/user_model.dart';
 import 'package:http/http.dart' as http;
+
+Future<UserModel?> LoginUser(
+  String? username,
+  String? password,
+) async{
+  try{
+    var url = Uri.http(serverUrl, '/user/login');
+    var body = {
+      if (username != null) 'username' : username,
+      if (password != null) 'password': password,
+    };
+    var res = await http.post(
+      url,
+      body: jsonEncode(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if(res.statusCode == 200){
+      print("Successfully login user");
+      var bodyJson = jsonDecode(res.body);
+      return UserModel.fromJson(bodyJson);
+    }else{
+      print("Login user failed");
+      return null;
+    }
+  }catch(err){
+    print("LoginUser failed, error: $err");
+    return null;
+  }
+}
 Future<UserModel?> postUser(
   String? username,
   String? password,
@@ -9,7 +40,7 @@ Future<UserModel?> postUser(
   int? global_address
 ) async {
   try{
-    var url = Uri.http(serverUrl, '/user');
+    var url = Uri.http(serverUrl, '/user/register');
     var body = {
       if (username != null) 'username' : username,
       if (password != null) 'password': password,
@@ -23,7 +54,7 @@ Future<UserModel?> postUser(
         'Content-Type': 'application/json',
       },
     );
-    if(res.statusCode == 200){
+    if(res.statusCode == 201){
       print("Successfully create user");
       var bodyJson = jsonDecode(res.body);
       return UserModel.fromJson(bodyJson);

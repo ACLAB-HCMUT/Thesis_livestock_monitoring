@@ -12,7 +12,7 @@ class CowModel {
   int? age;
   bool? sex;
   int? weight;
-  String? safeZoneId;
+  String? groupId;
   String? status;
   String? timestamp;
   CowModel(
@@ -29,7 +29,7 @@ class CowModel {
       required this.age,
       required this.sex,
       required this.weight,
-      required this.safeZoneId,
+      required this.groupId,
       required this.status,
       required this.timestamp});
 
@@ -48,7 +48,7 @@ class CowModel {
       'age': age,
       'sex': sex,
       'weight': weight,
-      'safeZoneId': safeZoneId,
+      'groupId': groupId,
       'status': status,
       'timestamp': timestamp,
     }..removeWhere((key, value) => value == null);
@@ -74,7 +74,7 @@ class CowModel {
       sex: json['sex'],
       weight: json['weight'],
       status: json['status'],
-      safeZoneId: json['safeZoneId'],
+      groupId: json['groupId'],
       timestamp: json.containsKey('timestamp') ? json['timestamp'] : null,
     );
   }
@@ -92,11 +92,11 @@ class CowModel {
     int? age,
     bool? sex,
     int? weight,
-    String? safeZoneId,
+    String? groupId,
     String? status,
     String? timestamp,
   }) {
-    return CowModel(id: id??this.id, name: name ?? this.name, cowAddr: cowAddr?? this.cowAddr, username: username ?? this.username, latestLatitude: latestLatitude ?? this.latestLatitude, latestLongitude: latestLongitude ?? this.latestLongitude, medicated: medicated ?? this.medicated, sick: sick ?? this.sick, pregnant: pregnant ?? this.pregnant, missing: missing ?? this.missing, age: age ?? this.age, sex: sex ?? this.sex, weight: weight ?? this.weight, safeZoneId: safeZoneId ?? this.safeZoneId, status: status ?? this.status, timestamp: timestamp ?? this.timestamp);
+    return CowModel(id: id??this.id, name: name ?? this.name, cowAddr: cowAddr?? this.cowAddr, username: username ?? this.username, latestLatitude: latestLatitude ?? this.latestLatitude, latestLongitude: latestLongitude ?? this.latestLongitude, medicated: medicated ?? this.medicated, sick: sick ?? this.sick, pregnant: pregnant ?? this.pregnant, missing: missing ?? this.missing, age: age ?? this.age, sex: sex ?? this.sex, weight: weight ?? this.weight, groupId: groupId ?? this.groupId, status: status ?? this.status, timestamp: timestamp ?? this.timestamp);
   }
 
   void showCowModel() {
@@ -113,7 +113,7 @@ class CowModel {
     print('age: $age');
     print('sex: $sex');
     print('weight: $weight');
-    print('safeZoneId: ${safeZoneId}');
+    print('groupId: ${groupId}');
     print('Timestamp: ${timestamp ?? "Not available"}');
     print('status: ${status}');
   }

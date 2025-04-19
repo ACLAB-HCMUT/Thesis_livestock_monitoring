@@ -43,3 +43,18 @@ class GetUserByUsernameEvent extends UserEvent{
   @override
   List<Object> get props => [username];
 }
+
+class LoginUserEvent extends UserEvent{
+  final String username;
+  final String password;
+
+  LoginUserEvent({required this.username, required this.password});
+  @override
+  List<Object> get props => [
+    username, password
+  ];
+}
+class LogoutUserEvent extends UserEvent{
+
+  LogoutUserEvent();
+}

@@ -49,6 +49,9 @@ dependencies:
   lottie: ^3.1.3
   flutter_blue_plus: ^1.34.5
   flutter_local_notifications: ^17.0.0
+  fl_chart: ^0.64.0
+  intl: ^0.18.1
+
 
 
 
@@ -85,6 +88,9 @@ flutter:
     - assets/background_image1.jpg
     - assets/app_logo.png
     - assets/animations/
+    - assets/style1.json
+    - assets/custom_style.json
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
