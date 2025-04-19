@@ -60,7 +60,7 @@ const postCowx = async (req, res) => {
       }
     );
   } catch (err) {
-    console.log("cascjasijciasjcaiscasijcaisj");
+    console.log(err);
     return res.status(500).json(err);
   }
 };
@@ -132,7 +132,7 @@ const updateCowById = async (req, res) => {
     // Call the updateCowById function with cowId and cowData
     const updatedCow = await cowService.updateCowById(cow_id, cowData);
     if (updatedCow) {
-      // Return a success response with the updated cow data
+      console.log("Updated Cơw", updatedCow)
       return res.status(200).json(updatedCow);
     } else {
       // If the cow with the given ID was not found, return a 404 response
@@ -144,6 +144,49 @@ const updateCowById = async (req, res) => {
     return res.status(500).json({ message: "Failed to update cow", error });
   }
 };
+const updateCowStatusById = async (req, res) => {
+  try {
+    const cowData = req.body;
+    // console.log(cow_id);
+    // console.log(cowData);
+    // Call the updateCowById function with cowId and cowData
+    const updatedCow = await cowService.updateCowStatusById(cowData.cow_id, cowData.status);
+    if (updatedCow) {
+      console.log("Updated Cơw", updatedCow)
+      return res.status(200).json(updatedCow);
+    } else {
+      // If the cow with the given ID was not found, return a 404 response
+      return res.status(404).json({ message: "Cow not found" });
+    }
+  } catch (error) {
+    // Handle any errors that occurred during the update process
+    console.error("Error updating cow:", error);
+    return res.status(500).json({ message: "Failed to update cow", error });
+  }
+};
+const getCowStatusHistory = async (req, res) => {
+  try {
+    const cow_id = req.params.cow_id;
+    const history = await cowService.getCowStatusHistory(cow_id);
+    return res.status(200).json(history);
+
+  } catch (error) {
+    console.error('Error getting cow status history:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+const getCowStatusAnalytics = async (req, res) => {
+  try {
+    const cow_id = req.params.cow_id;
+    const days = parseInt(req.query.days) || 7; 
+    const analytics = await cowService.getCowStatusAnalytics(cow_id,days);
+    return res.status(200).json(analytics);
+  } catch (error) {
+    console.error('Error getting cow status analytics:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+
 export default {
   getCowByUsername,
   getAllCows,
@@ -154,4 +197,7 @@ export default {
   deleteCowByUsername,
   updateLatestLocationById,
   updateCowById,
+  updateCowStatusById,
+  getCowStatusHistory,
+  getCowStatusAnalytics
 };

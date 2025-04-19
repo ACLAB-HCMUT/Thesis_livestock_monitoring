@@ -9,6 +9,7 @@ import userRouter from "./src/routes/userRouter.js";
 import cowRouter from "./src/routes/cowRouter.js";
 import cowLocationRouter from "./src/routes/cowLocationRouter.js";
 import saveZoneRouter from "./src/routes/safeZoneRouter.js"; 
+import deviceRouter from "./src/routes/deviceRouter.js"; 
 import { initCowChangeStream } from "./src/services/cowRouterx.js";
 import { createServer } from 'http';
 
@@ -26,6 +27,7 @@ app.use("/user", userRouter);
 app.use("/cow", cowRouter);
 app.use("/cow_location", cowLocationRouter);
 app.use("/safezones", saveZoneRouter);
+app.use("/device", deviceRouter);
 
 mongoose.connect(process.env.MONGO_DB_URI, {
   useNewUrlParser: true,

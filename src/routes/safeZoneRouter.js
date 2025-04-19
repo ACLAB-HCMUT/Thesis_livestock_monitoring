@@ -8,7 +8,7 @@ router.get("/username/:username", safeZoneController.getSafeZoneByUsername);
 
 router.get("/all", safeZoneController.getAllSafeZone);
 
-router.put("/:username/:id", safeZoneController.updateSafeZone);
+router.put("/:username", safeZoneController.updateSafeZone);
 router.delete("/:username/:id", safeZoneController.deleteSafeZone);
 
 export default router;

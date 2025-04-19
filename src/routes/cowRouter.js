@@ -14,7 +14,10 @@ router.get('/username/:username', cowController.getCowByUsername);
 /* Get cow by id */
 router.get('/:cow_id', cowController.getCowById);
 router.get('/api/all', cowController.getAllCows);
-
+// Get cow status history
+router.get('/statusHistory/:cow_id', cowController.getCowStatusHistory);
+// Get cow status analytics
+router.get('/statusAnalytics/:cow_id', cowController.getCowStatusAnalytics);
 /* ------------------------------- */
 
 
@@ -30,5 +33,7 @@ router.delete('/username/:username', cowController.deleteCowByUsername);
 /* Update cow by id */
 router.put('/location/:username/:cow_id', cowController.updateLatestLocationById);
 router.put('/:username/:cow_id', cowController.updateCowById);
+router.put('/updateStatus', cowController.updateCowStatusById);
+
 /* ---------------------------------- */
 export default router;

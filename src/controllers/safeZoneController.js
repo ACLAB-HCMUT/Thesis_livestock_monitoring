@@ -2,6 +2,7 @@ import safeZoneService from "../services/safeZoneService.js";
 export const createSafeZone = async (req, res) => {
   const username = req.params.username;
   try {
+    // console.log(req.body);
     const safeZone = await safeZoneService.createSafeZone(req.body);
     res.status(201).json(safeZone);
   } catch (error) {
@@ -48,12 +49,10 @@ export const getAllSafeZone = async (req, res) => {
     res.status(500).json({ message: "Failed to retrieve safe zone", error });
   }
 };
-
-
 export const updateSafeZone = async (req, res) => {
   const username = req.params.username;
   try {
-    const safeZone = await safeZoneService.updateSafeZone(req.params.id, req.body.safeZone);
+    const safeZone = await safeZoneService.updateSafeZone(username,  req.body);
     if (safeZone) {
       res.status(200).json(safeZone);
     } else {
@@ -64,8 +63,6 @@ export const updateSafeZone = async (req, res) => {
     res.status(500).json({ message: "Failed to update safe zone", error });
   }
 };
-
-
 export const deleteSafeZone = async (req, res) => {
   const username = req.params.username;
   try {
@@ -80,4 +77,3 @@ export const deleteSafeZone = async (req, res) => {
     res.status(500).json({ message: "Failed to delete safe zone", error });
   }
 };
-
