@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { type } from 'os';
 const cowSchema = new mongoose.Schema({
     cow_addr: {
         type: Number,
@@ -44,6 +45,9 @@ const cowSchema = new mongoose.Schema({
     groupId: {
         type: String,
         default: "Undefined", 
+    },
+    note: {
+        type: String
     },
     timestamp: {
         type: Date

@@ -24,6 +24,7 @@ const createCowx = async (req) => {
         weight: req.body.weight || 50,
         status: req.body.status || "idle",
         groupId: req.body.safeZoneId || "Undefined",
+        note: "",
         timestamp: req.body.timestamp || Date.now(),
     };
     const newCow = new CowModel(cowData);
@@ -117,6 +118,16 @@ const updateCowById = async (cowId, cow) => {
     }
     return updatedCow;
 };
+const updateCowNote = async (cowId, updatedNode) => {
+    const updatedCow = await CowModel.findById(cowId);
+    if(updatedCow) {
+        updatedCow.note = updatedNode;
+        await updatedCow.save();
+        return updatedCow;
+    }else{
+        return undefined;
+    }
+}
 
 const updateLatestLocationById = async (cowId, longitude, latitude) => {
     const updatedCow = await CowModel.findById(cowId);
@@ -311,5 +322,6 @@ export default {
     updateCowAddressById,
     updateCowStatusById,
     getCowStatusAnalytics,
-    getCowStatusHistory
+    getCowStatusHistory,
+    updateCowNote
 };
