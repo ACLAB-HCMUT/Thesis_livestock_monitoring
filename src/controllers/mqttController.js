@@ -20,6 +20,8 @@ const FCM = admin.messaging();
 const handle_mqtt_msg = async (topic, msg) => {
   let data, split_data, cow_id;
   let username, response_msg;
+  let cow_status;
+  let cow_status_str;
   const header = parseInt(msg.slice(0, 2));
   switch (header) {
     case constants.HEADER_GATEWAY_REQUEST_GET_COWS:
@@ -31,16 +33,29 @@ const handle_mqtt_msg = async (topic, msg) => {
         "0" + constants.HEADER_BACKEND_RESPONSE_GET_COWS + JSON.stringify(cows);
       mqttService.publish(topic, response_msg);
       break;
-    // case constants.HEADER_GATEWAY_SEND_COW_STATUS:
-    //     /* Call service update cow status */
-    //     console.log("HEADER_GATEWAY_SEND_COW_STATUS");
-    //     data = msg.slice(2);
-    //     split_data = data.split(':');
-    //     cow_id = split_data[0];
-    //     let cow_status = split_data[1];
-    //     await cowService.updateCowStatusById(cow_id, cow_status);
-    //     break;
-    case constants.HEADER_GATEWAY_SEND_COW_INFOR:
+    case constants.HEADER_GATEWAY_SEND_COW_STATUS:
+      /* Call service update cow status */
+      console.log("HEADER_GATEWAY_SEND_COW_STATUS");
+      data = msg.slice(2);
+      split_data = data.split(':');
+      cow_id = split_data[0];
+      cow_status = split_data[1];
+      cow_status_str = "idle";
+      switch(cow_status){
+        case 0:
+          cow_status_str = "eating";
+          break;
+        case 1:
+          cow_status_str = "idle";
+          break;
+        case 2:
+          cow_status_str = "walking";
+          break;
+      }
+      /* Call service update latest status */
+      await cowService.updateCowStatusById(cow_id, cow_status_str);
+      break;
+    case constants.HEADER_GATEWAY_SEND_COW_GPS_AND_STATUS:
       data = msg.slice(2);
       split_data = data.split(":");
       console.log("HEADER_GATEWAY_SEND_COW_INFOR", split_data);
@@ -48,6 +63,21 @@ const handle_mqtt_msg = async (topic, msg) => {
       let longitude = parseFloat(split_data[1]);
       let latitude = parseFloat(split_data[2]);
       let is_out_safezone = parseInt(split_data[3]);
+      cow_status = parseInt(split_data[4]);
+      cow_status_str = "idle";
+      switch(cow_status){
+        case 0:
+          cow_status_str = "eating";
+          break;
+        case 1:
+          cow_status_str = "idle";
+          break;
+        case 2:
+          cow_status_str = "walking";
+          break;
+      }
+      /* Call service update latest status */
+      await cowService.updateCowStatusById(cow_id, cow_status_str);
       /* Call service update latest gps */
       await cowService.updateLatestLocationById(cow_id, longitude, latitude);
       /* Call service create new gps */
