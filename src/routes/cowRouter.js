@@ -34,6 +34,8 @@ router.delete('/username/:username', cowController.deleteCowByUsername);
 router.put('/location/:username/:cow_id', cowController.updateLatestLocationById);
 router.put('/:username/:cow_id', cowController.updateCowById);
 router.put('/updateStatus', cowController.updateCowStatusById);
+router.put('/updateNode', cowController.updateCowNote);
+
 
 /* ---------------------------------- */
 export default router;

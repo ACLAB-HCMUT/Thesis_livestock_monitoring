@@ -144,6 +144,22 @@ const updateCowById = async (req, res) => {
     return res.status(500).json({ message: "Failed to update cow", error });
   }
 };
+const updateCowNote = async (req, res) => {
+  try {
+    const cowData = req.body;
+    const updatedCow = await cowService.updateCowNote(cowData.cowId, cowData.updatedNode);
+    if (updatedCow) {
+      console.log("Updated Cow", updatedCow)
+      return res.status(200).json(updatedCow);
+    } else {
+      // If the cow with the given ID was not found, return a 404 response
+      return res.status(404).json({ message: "Cow not found" });
+    }
+  } catch (error) {
+    console.error("Error updating cownote:", error);
+    return res.status(500).json({ message: "Failed to update cow note", error });
+  }
+}
 const updateCowStatusById = async (req, res) => {
   try {
     const cowData = req.body;
@@ -199,5 +215,6 @@ export default {
   updateCowById,
   updateCowStatusById,
   getCowStatusHistory,
-  getCowStatusAnalytics
+  getCowStatusAnalytics,
+  updateCowNote
 };
