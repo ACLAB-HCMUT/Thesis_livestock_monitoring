@@ -8,14 +8,15 @@ part 'device_event.dart';
 class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
   DeviceBloc() : super(DeviceInitial()) {
     on<GetAllDeviceEvent>(_onGetAllDevice);
-    on<DeleteDeviceIdEvent>(_onDeleteDeviceById); 
+    on<DeleteDeviceIdEvent>(_onDeleteDeviceById);
+    on<CreateDeviceEvent>(_onCreateDevice);
   }
   Future<void> _onGetAllDevice(GetAllDeviceEvent event, Emitter<DeviceState> emit) async {
     emit(DeviceLoading());
     try {
       List<DeviceModel>? Devices = await getAllDevice();
       print("Save zones : $Devices");
-      emit(Devices != null ? DeviceLoaded(Devices) : DeviceError("No save zone found"));
+      emit(Devices != null ? DeviceLoaded(Devices) : DeviceError("No device found"));
     } catch (e) {
       emit(DeviceError(e.toString()));
     }
@@ -23,8 +24,8 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
   Future<void> _onDeleteDeviceById(DeleteDeviceIdEvent event, Emitter<DeviceState> emit) async {
     emit((DeviceDeleting()));
     try {
-      int? statusCode = await deleteDeviceById(event.DeviceId, event.username);
-      emit(statusCode == 200 ? DeviceDeleted(event.DeviceId) : DeviceError("Failed to delete save zone"));
+      int? statusCode = await deleteDeviceById(event.DeviceId);
+      emit(statusCode == 200 ? DeviceDeleted(event.DeviceId) : DeviceError("Failed to delete device"));
       if(state is DeviceDeleted){
         add(GetAllDeviceEvent());
       }
@@ -32,4 +33,16 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
       emit(DeviceError(e.toString()));
     }
   }
+  Future<void> _onCreateDevice(CreateDeviceEvent event, Emitter<DeviceState> emit) async {
+    emit((DeviceLoading()));
+    try {
+      int? statusCode = await addNewDeviceById(event.username);
+      if(statusCode == 200){
+        add(GetAllDeviceEvent());
+      }
+    } catch (e) {
+      emit(DeviceError(e.toString()));
+    }
+  }
+
 }

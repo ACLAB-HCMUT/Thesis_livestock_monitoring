@@ -17,7 +17,7 @@ class CustomAppBar extends StatelessWidget {
             if (state is UserLoaded) {
               return Text(
                 'Xin chào ${state.user.fullname}',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -25,7 +25,7 @@ class CustomAppBar extends StatelessWidget {
                 textAlign: TextAlign.center,
               );
             } else {
-              return Text(
+              return const Text(
                 'Xin chào',
                 style: TextStyle(
                   color: Colors.white,
@@ -49,19 +49,19 @@ class CustomAppBar extends StatelessWidget {
               left: 50,
               right: 50,
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                 height: 50,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 10,
                     ),
                   ],
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(Icons.search, color: Colors.black54),

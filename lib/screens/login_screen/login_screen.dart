@@ -1,4 +1,5 @@
 import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
+import 'package:do_an_app/screens/admin_dashboard_screen/admin_dashboard_screen.dart';
 import 'package:do_an_app/screens/cow_add_new_screen/widgets/loading_overlay.dart';
 import 'package:do_an_app/screens/custom_dashboard_screen/custom_dashboard_screen.dart';
 import 'package:do_an_app/screens/custom_dashboard_screen/utils/dialog.dart';
@@ -35,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
@@ -45,14 +45,19 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           setState(() => _isLoading = false);
           if (state is UserLoaded) {
-            Future.delayed(const Duration(milliseconds: 300), () {
-              // Add a small delay
+            // Remove the delay which is likely causing the perceived lag
+            if (state.user.role == "user") {
               Navigator.of(context).pushReplacement(
                 SlideRightRoute(page: CustomDashboardScreen()),
               );
-            });
+            } else if (state.user.role == "admin") {
+              Navigator.of(context).pushReplacement(
+                SlideRightRoute(page: AdminDashboard()),
+              );
+            }
           } else if (state is UserError) {
-            ShowDialog.showErrorDialog(context, "Login failed", "Invalid email or password.");
+            ShowDialog.showErrorDialog(
+                context, "Login failed", "Invalid email or password.");
           }
         }
       },

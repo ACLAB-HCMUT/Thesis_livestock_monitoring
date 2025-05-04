@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class StatusHelpers {
   static IconData getStatusIcon(String? status) {
     switch (status?.toLowerCase()) {
-      case 'eating':
-        return Icons.restaurant;
+      case 'running':
+        return Icons.directions_run;
       case 'walking':
         return Icons.directions_walk;
       case 'idle':
@@ -15,7 +15,7 @@ class StatusHelpers {
   }
   static Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
-      case 'eating':
+      case 'running':
         return Colors.green;
       case 'walking':
         return Colors.blue;

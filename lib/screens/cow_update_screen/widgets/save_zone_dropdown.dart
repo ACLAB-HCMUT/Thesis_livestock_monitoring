@@ -1,3 +1,4 @@
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.dart';
@@ -10,12 +11,13 @@ class SaveZoneDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userState = context.read<UserBloc>().state as UserLoaded;
     return BlocBuilder<SaveZoneBloc, SaveZoneState>(
       builder: (context, state) {
         if (state is SaveZoneLoading) {
           return Text("Loading save zones ... ");
         } else if (state is SaveZoneLoaded) {
-          final saveZones = state.safeZones;
+          final saveZones = state.safeZones.where((safeZone) => safeZone.username == userState.user.username);
           return DropdownButtonFormField<String>(
             value: selectedSafeZoneId,
             onChanged: onChanged,

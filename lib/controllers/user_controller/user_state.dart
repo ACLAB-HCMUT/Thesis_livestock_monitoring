@@ -6,15 +6,19 @@ sealed class UserState extends Equatable {
   @override
   List<Object> get props => [];
 }
-
 final class UserInitial extends UserState {}
 final class UserLoading extends UserState {}
 final class UserLoaded extends UserState {
   final UserModel user;
-
   UserLoaded(this.user);
   @override
   List<Object> get props => [user];
+}
+final class UsersLoaded extends UserState {
+  final List<UserModel> users;
+  UsersLoaded(this.users);
+  @override
+  List<Object> get props => [users];
 }
 
 final class UserUpdating extends UserState {}
@@ -28,10 +32,10 @@ final class UserUpdated extends UserState {
 
 final class UserDeleting extends UserState {}
 final class UserDeleted extends UserState {
-  final UserModel user;
-  UserDeleted(this.user);
+  final String userId;
+  UserDeleted(this.userId);
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [userId];
 }
 final class UserError extends UserState{
   final String message;

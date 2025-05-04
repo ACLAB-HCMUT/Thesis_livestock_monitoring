@@ -10,6 +10,7 @@ import 'package:do_an_app/controllers/save_zone_controller/bloc/save_zone_bloc.d
 class SafeZoneSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userState = context.read<UserBloc>().state as UserLoaded;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
@@ -40,9 +41,25 @@ class SafeZoneSection extends StatelessWidget {
                 if (state is SaveZoneLoading) {
                   return const Text("Đang tải .... Vui lòng đợi ! ");
                 } else if (state is SaveZoneLoaded) {
-                  final saveZones = state.safeZones;
+                  final saveZones = state.safeZones
+                      .where((safeZone) =>
+                          safeZone.username == userState.user.username)
+                      .toList();
                   if (saveZones.isEmpty) {
-                    return const Text("Không có chuồng nào ... ");
+                    return Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: const Text(
+                          'Không có chuồng nào ... 🐄',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 123, 162, 125),
+                          ),
+                        ),
+                      ),
+                    );
                   }
                   return Container(
                     height: 200,
@@ -62,8 +79,7 @@ class SafeZoneSection extends StatelessWidget {
                             color: Colors.blueGrey.shade200,
                             child: ListTile(
                               leading: IconButton(
-                                onPressed: () {
-                                },
+                                onPressed: () {},
                                 icon:
                                     const Icon(Icons.map, color: Colors.white),
                               ),
@@ -83,20 +99,24 @@ class SafeZoneSection extends StatelessWidget {
                                 children: [
                                   IconButton(
                                     onPressed: () {
-                                      ShowDialog.showConfirmationDialog(context, "Alert message", "Are you sure to delete this group ?", (){
+                                      ShowDialog.showConfirmationDialog(
+                                          context,
+                                          "Alert message",
+                                          "Are you sure to delete this group ?",
+                                          () {
                                         context.read<SaveZoneBloc>().add(
-                                            DeleteSaveZoneIdEvent(
-                                              saveZone.id ?? "",
-                                              (context.read<UserBloc>().state
-                                                          as UserLoaded)
-                                                      .user
-                                                      .username ??
-                                                  "",
-                                            ),
-                                          );
+                                              DeleteSaveZoneIdEvent(
+                                                saveZone.id ?? "",
+                                                (context.read<UserBloc>().state
+                                                            as UserLoaded)
+                                                        .user
+                                                        .username ??
+                                                    "",
+                                              ),
+                                            );
                                       });
                                     },
-                                    icon:  Icon(Icons.delete,
+                                    icon: Icon(Icons.delete,
                                         color: Colors.red.shade300),
                                   ),
                                 ],
@@ -111,6 +131,8 @@ class SafeZoneSection extends StatelessWidget {
                 return const Text("No save zone found ... ");
               },
             ),
+            const SizedBox(height: 10,)
+            ,
             Align(
               alignment: Alignment.center,
               child: ElevatedButton.icon(

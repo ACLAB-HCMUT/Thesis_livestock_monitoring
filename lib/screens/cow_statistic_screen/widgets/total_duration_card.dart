@@ -16,18 +16,18 @@ class TotalDurationCard extends StatelessWidget {
 
     final data = analyticsData['data'] as List;
 
-    int totalEating = 0;
+    int totalRunning = 0;
     int totalWalking = 0;
     int totalIdle = 0;
 
     for (final item in data) {
-      totalEating += (item['eatingDuration'] ?? 0) as int;
+      totalRunning += (item['runningDuration'] ?? 0) as int;
       totalWalking += (item['walkingDuration'] ?? 0) as int;
       totalIdle += (item['idleDuration'] ?? 0) as int;
     }
 
-    final totalSeconds = totalEating + totalWalking + totalIdle;
-    final eatingPercentage = totalSeconds > 0 ? (totalEating / totalSeconds * 100).toStringAsFixed(1) : '0';
+    final totalSeconds = totalRunning + totalWalking + totalIdle;
+    final runningPercentage = totalSeconds > 0 ? (totalRunning / totalSeconds * 100).toStringAsFixed(1) : '0';
     final walkingPercentage = totalSeconds > 0 ? (totalWalking / totalSeconds * 100).toStringAsFixed(1) : '0';
     final idlePercentage = totalSeconds > 0 ? (totalIdle / totalSeconds * 100).toStringAsFixed(1) : '0';
 
@@ -48,9 +48,9 @@ class TotalDurationCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _DurationItem(
-                  label: 'Eating',
-                  seconds: totalEating,
-                  percentage: eatingPercentage,
+                  label: 'Running',
+                  seconds: totalRunning,
+                  percentage: runningPercentage,
                   color: Colors.green,
                 ),
                 _DurationItem(

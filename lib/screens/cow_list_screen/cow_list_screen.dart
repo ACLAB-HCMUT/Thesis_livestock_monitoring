@@ -1,4 +1,5 @@
 import 'package:do_an_app/controllers/device_controller/device_bloc.dart';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/screens/cow_add_new_screen/cow_add_new_screen.dart';
 import 'package:do_an_app/screens/custom_dashboard_screen/custom_dashboard_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class CowListScreen extends StatefulWidget {
 
 class _CowListScreenState extends State<CowListScreen> {
   bool _isLoading = false;
-  
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -29,6 +30,7 @@ class _CowListScreenState extends State<CowListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = context.read<UserBloc>().state as UserLoaded;
     return BlocListener<CowBloc, CowState>(
       listener: (context, state) {
         if (state is CowDeleting) {
@@ -75,7 +77,9 @@ class _CowListScreenState extends State<CowListScreen> {
               ),
             );
           } else if (state is CowsLoaded) {
-            final cows = state.cows;
+            final cows = state.cows
+                .where((cow) => cow.username == userState.user.username)
+                .toList();
 
             return Scaffold(
               appBar: AppBar(
@@ -111,26 +115,44 @@ class _CowListScreenState extends State<CowListScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 1,
-                          childAspectRatio: 1.7,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                        ),
-                        itemCount: cows.length,
-                        itemBuilder: (context, index) {
-                          final cow = cows[index];
-                          return CowCard(cow: cow);
-                        },
-                      ),
-                    ),
-                  ),
+                    child: cows.isEmpty
+                        ? Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 39, vertical: 25),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade50,
+                                border:
+                                    Border.all(color: Colors.green.shade300),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'Không có con bò nào 🐄',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ),
+                          )
+                        : GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 1,
+                              childAspectRatio: 1.7,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
+                            itemCount: cows.length,
+                            itemBuilder: (context, index) {
+                              final cow = cows[index];
+                              return CowCard(cow: cow);
+                            },
+                          ),
+                  )
                 ],
               ),
-
               resizeToAvoidBottomInset: false,
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,

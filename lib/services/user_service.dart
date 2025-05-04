@@ -3,6 +3,33 @@ import 'package:do_an_app/global.dart';
 import 'package:do_an_app/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
+
+Future<List<UserModel>?> getAllUser() async {
+  try{
+    var url = Uri.http(serverUrl, '/user/all');
+
+    var res = await http.get(
+      url
+    );
+
+    if(res.statusCode == 200){
+      List<dynamic> DeviceModelJsons = json.decode(res.body);
+
+      List<UserModel> DeviceModels = [];
+      for(final DeviceModelJson in DeviceModelJsons){
+        DeviceModels.add(UserModel.fromJson(DeviceModelJson));
+      }
+      return DeviceModels;
+    }else {
+      print("getAllDevice failed, status code: ${res.statusCode}");
+      return null;
+    }
+  }catch(err){
+    print("getAllDevice failed, error: $err");
+    return null;
+  }
+}
+
 Future<UserModel?> LoginUser(
   String? username,
   String? password,
@@ -154,3 +181,30 @@ Future<int?> getAndIncrementGlobalAddress(
     return null;
   }
 }
+
+
+Future<int?> deleteUserById(String userId) async {
+  try{
+    var url = Uri.http(serverUrl, '/user/delete');
+    final body = jsonEncode({'userId': userId});
+
+    var res = await http.delete(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+    
+    if(res.statusCode == 200){
+      print("Delete success");
+      return 200;
+    }else{
+      print("deleteUserById failed, status code: ${res.statusCode}");  
+      return res.statusCode;
+    }
+
+  }catch(err){
+    print("deleteUserById failed, error: $err");
+    return null;
+  }
+}
+

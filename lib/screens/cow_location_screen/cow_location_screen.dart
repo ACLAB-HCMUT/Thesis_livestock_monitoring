@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/models/cow_model.dart';
 import 'package:do_an_app/screens/custom_dashboard_screen/custom_dashboard_screen.dart';
 import 'package:do_an_app/screens/cow_location_screen/utils/map_helpers.dart';
@@ -134,6 +135,7 @@ class _CowLocationScreenState extends State<CowLocationScreen> {
 
   void _onMapCreated(MapLibreMapController controller) async {
     await Future.delayed(const Duration(milliseconds: 500));
+    final userState = context.read<UserBloc>().state as UserLoaded;
     mapController = controller;
     await mapController.setSymbolIconAllowOverlap(true);
     await mapController.setSymbolTextAllowOverlap(true);
@@ -144,23 +146,28 @@ class _CowLocationScreenState extends State<CowLocationScreen> {
     final saveZoneState = context.read<SaveZoneBloc>().state;
     if (saveZoneState is SaveZoneLoaded) {
       for (var saveZone in saveZoneState.safeZones) {
-        LatLng centerPoint = _routeService.calculateCenter(saveZone.safeZone!);
-        List<LatLng> polygons =
-            _routeService.convertPointsToLatLng(saveZone.safeZone ?? []);
-        mapController.addFill(
-          FillOptions(
-            geometry:  [[...polygons, polygons.first]],
-            fillColor: "#00FF00",
-            fillOpacity: 0.4,
-          ),
-        );
-        mapController.addLine(
-          LineOptions(
-            geometry: [...polygons, polygons.first],
-            lineColor: "#000000",
-            lineWidth: 2.0,
-          ),
-        );
+        if (saveZone.username == userState.user.username) {
+          // LatLng centerPoint =
+          //     _routeService.calculateCenter(saveZone.safeZone!);
+          // List<LatLng> polygons =
+          //     _routeService.convertPointsToLatLng(saveZone.safeZone ?? []);
+          // mapController.addFill(
+          //   FillOptions(
+          //     geometry: [
+          //       [...polygons, polygons.first]
+          //     ],
+          //     fillColor: "#00FF00",
+          //     fillOpacity: 0.4,
+          //   ),
+          // );
+          // mapController.addLine(
+          //   LineOptions(
+          //     geometry: [...polygons, polygons.first],
+          //     lineColor: "#000000",
+          //     lineWidth: 2.0,
+          //   ),
+          // );
+        }
       }
     }
     final cowState = context.read<CowBloc>().state;

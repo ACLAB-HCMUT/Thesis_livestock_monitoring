@@ -72,9 +72,7 @@ class _CowStatisticsScreenState extends State<CowStatisticsScreen> {
         backgroundColor: Colors.green[300],
         centerTitle: true,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
+      body: _errorMessage.isNotEmpty
               ? Center(child: Text(_errorMessage))
               : _buildStatisticsBody(),
     );

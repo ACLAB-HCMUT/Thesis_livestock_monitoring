@@ -29,12 +29,16 @@ Future<List<DeviceModel>?> getAllDevice() async {
     return null;
   }
 }
-Future<int?> deleteDeviceById(String DeviceId, String username) async {
+Future<int?> deleteDeviceById(String DeviceId) async {
   try{
-    var url = Uri.http(serverUrl, '/device/$username/$DeviceId');
+    var url = Uri.http(serverUrl, '/device/delete');
+    final body = jsonEncode({'deviceId': DeviceId});
 
     var res = await http.delete(
-      url);
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
     
     if(res.statusCode == 200){
       print("Delete success");
@@ -49,4 +53,29 @@ Future<int?> deleteDeviceById(String DeviceId, String username) async {
     return null;
   }
 }
+Future<int?> addNewDeviceById(String username) async {
+  try{
+    var url = Uri.http(serverUrl, '/device/');
+    final body = jsonEncode({'username': username});
+
+    var res = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+    
+    if(res.statusCode == 200){
+      print("Create successfully");
+      return 200;
+    }else{
+      print("addNewDeviceById failed, status code: ${res.statusCode}");  
+      return res.statusCode;
+    }
+
+  }catch(err){
+    print("addNewDeviceById failed, error: $err");
+    return null;
+  }
+}
+
 

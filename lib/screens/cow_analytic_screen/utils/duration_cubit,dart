@@ -1,0 +1,28 @@
+import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class DurationCubit extends Cubit<Duration> {
+  Timer? _timer;
+  DateTime _startTime;
+
+  DurationCubit(this._startTime) : super(Duration.zero) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      emit(DateTime.now().difference(_startTime));
+    });
+  }
+
+  void reset(DateTime newStartTime) {
+    _startTime = newStartTime;
+    emit(Duration.zero);
+  }
+
+  void stop() {
+    _timer?.cancel();
+  }
+
+  @override
+  Future<void> close() {
+    stop();
+    return super.close();
+  }
+}

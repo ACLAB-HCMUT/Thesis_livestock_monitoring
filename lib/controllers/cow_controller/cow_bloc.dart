@@ -21,8 +21,8 @@ class CowBloc extends Bloc<CowEvent, CowState> {
     // no longer used, MQTT instead
     // Listen to real-time updates from cowService
     cowService.cowUpdates.listen((updatedCow) {
-      print("Database changed; triggering GetAllCowEvent. Id : " +
-          updatedCow['documentKey']['_id']);
+      // print("Database changed; triggering GetAllCowEvent. Id : " +
+          // updatedCow['documentKey']['_id']);
       if (state is CowLoaded &&
           (state as CowLoaded).cow.id == updatedCow['documentKey']['_id']) {
         

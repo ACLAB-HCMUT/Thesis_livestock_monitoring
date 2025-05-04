@@ -1,4 +1,5 @@
 import 'package:do_an_app/controllers/device_controller/device_bloc.dart';
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,12 +11,13 @@ class DeviceDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userState = context.read<UserBloc>().state as UserLoaded;
     return BlocBuilder<DeviceBloc, DeviceState>(
       builder: (context, state) {
         if (state is DeviceLoading) {
           return const Text("Loading devices ... ");
         } else if (state is DeviceLoaded) {
-          final Devices = state.devices.where((device) => device.cow_id == "").toList();
+          final Devices = state.devices.where((device) => device.cow_id == "" && device.username == userState.user.username).toList();
           // print("Devices");
           // print(Devices);
           // for (var device in Devices) {

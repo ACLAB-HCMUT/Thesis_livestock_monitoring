@@ -26,10 +26,7 @@ class DeviceDeleted extends DeviceState{
 
 class DeviceError extends DeviceState{
   final String message;
-
   DeviceError(this.message);
   @override
   List<Object> get props => [message];
 }
-
-

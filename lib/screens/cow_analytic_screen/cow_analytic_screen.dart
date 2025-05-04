@@ -19,10 +19,11 @@ class _CowAnalyticsScreenState extends State<CowAnalyticsScreen>
     with WidgetsBindingObserver {
   List<StatusDuration> statusHistory = [];
   Map<String, Duration> statusDurations = {
-    'eating': Duration.zero,
+    'running': Duration.zero,
     'walking': Duration.zero,
     'idle': Duration.zero,
   };
+  String? prevStatus;
   String? currentStatus;
   DateTime? statusStartTime;
   Timer? _durationTimer;
@@ -52,9 +53,9 @@ class _CowAnalyticsScreenState extends State<CowAnalyticsScreen>
   @override
   void dispose() {
     _durationTimer?.cancel();
+    _durationTimer = null;
     WidgetsBinding.instance.removeObserver(this);
     // Record the final time for current status
-    _endCurrentStatusTracking();
     super.dispose();
   }
 
@@ -124,86 +125,32 @@ class _CowAnalyticsScreenState extends State<CowAnalyticsScreen>
         centerTitle: true,
       ),
       body: BlocListener<CowBloc, CowState>(
-        listener: (context, state) {
-          if (state is CowLoaded) {
-//            print("YYYYYYYYYYYYYYYYYYYYYYYYYY");
-            // Only track if status actually changed
-            if (currentStatus != state.cow.status?.toLowerCase()) {
-              _startTrackingStatus(state.cow.status);
-            }
-          }
-        },
-        child: BlocBuilder<CowBloc, CowState>(
-          buildWhen: (previous, current) {
-            if (current is CowLoaded && previous is CowLoaded) {
-              final prevStatus = previous.cow.status?.toLowerCase();
-              final currStatus = current.cow.status?.toLowerCase();
-
-              return prevStatus != currStatus;
-            }
-
-            // If state type changes (e.g., from loading to loaded)
-            return previous.runtimeType != current.runtimeType;
-          },
-          builder: (context, state) {
-            // Use a cached widget when possible to avoid rebuilding
+          listener: (context, state) {
             if (state is CowLoaded) {
               if (currentStatus != state.cow.status?.toLowerCase()) {
-                return AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  child: _buildStateContent(state),
-                );
-              } else {
-                return _buildStateContent(state);
+                _startTrackingStatus(state.cow.status);
               }
             }
-            return const Center(
-              key: ValueKey('loading_state'),
-              child: CircularProgressIndicator(),
-            );
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStateContent(CowState state) {
-    if (state is CowLoading) {
-      return const Center(
-        key: ValueKey('loading_state'),
-        child: CircularProgressIndicator(),
-      );
-    } else if (state is CowLoaded) {
-      // Add key based on cow id to preserve widget state
-      return _buildAnalyticsBody(state.cow);
-    } else {
-      return const Center(
-        key: ValueKey('error_state'),
-        child: Text('Failed to load cow data'),
-      );
-    }
-  }
-
-  Widget _buildAnalyticsBody(CowModel cow) {
-    return ListView(
-      key: ValueKey('analytics_${cow.id}'),
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Pass currentDuration directly instead of calculating in build
-        StatusCard(
-          cow,
-          currentStatus != null && statusStartTime != null
-              ? DateTime.now().difference(statusStartTime!)
-              : Duration.zero,
-          key: ValueKey('status_card_${cow.id}'),
-        ),
-        const SizedBox(height: 16),
-        StatusHistoryCard(statusHistory, key: const ValueKey('history_card')),
-        const SizedBox(height: 16),
-        StatusDistributionCard(statusDurations,
-            key: const ValueKey('distribution_card')),
-        const SizedBox(height: 16),
-      ],
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // Pass currentDuration directly instead of calculating in build
+              StatusCard(
+                currentStatus != null ? currentStatus : "IDLE",
+                currentStatus != null && statusStartTime != null
+                    ? DateTime.now().difference(statusStartTime!)
+                    : Duration.zero,
+              ),
+              const SizedBox(height: 16),
+              StatusHistoryCard(statusHistory,
+                  key: const ValueKey('history_card')),
+              const SizedBox(height: 16),
+              StatusDistributionCard(statusDurations,
+                  key: const ValueKey('distribution_card')),
+              const SizedBox(height: 16),
+            ],
+          )),
     );
   }
 }

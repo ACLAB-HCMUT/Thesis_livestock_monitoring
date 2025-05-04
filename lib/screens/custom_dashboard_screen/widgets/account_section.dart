@@ -1,8 +1,6 @@
+import 'package:do_an_app/controllers/user_controller/user_bloc.dart';
 import 'package:do_an_app/screens/cow_list_screen/cow_list_screen.dart';
-import 'package:do_an_app/screens/custom_dashboard_screen/custom_dashboard_screen.dart';
-import 'package:do_an_app/screens/login_screen/login_screen.dart';
 import 'package:do_an_app/screens/profile_screen/user_profile_screen.dart';
-import 'package:do_an_app/screens/slide_transition/slide_right_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:do_an_app/controllers/cow_controller/cow_bloc.dart';
@@ -12,14 +10,15 @@ import 'icon_with_text.dart';
 class AccountSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userState = context.read<UserBloc>().state as UserLoaded;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 10,
@@ -43,10 +42,6 @@ class AccountSection extends StatelessWidget {
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // Navigator.of(context).pushReplacement(
-                    //   SlideRightRoute(page: const UserProfileScreen()),
-                      
-                    // );
                     Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -62,31 +57,31 @@ class AccountSection extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 BlocBuilder<CowBloc, CowState>(
                   builder: (context, state) {
                     if (state is CowLoading) {
-                      return Text("");
+                      return const Text("");
                     } else if (state is CowsLoaded) {
-                      final cows = state.cows;
+                      final cows = state.cows.where((cow) => cow.username == userState.user.username);
                       final int totalCows = cows.length;
                       return Text(
                         '$totalCows con bò',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       );
                     }
-                    return Text("");
+                    return const Text("");
                   },
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             GridView.count(
               crossAxisCount: 2,
               shrinkWrap: true,
@@ -97,7 +92,7 @@ class AccountSection extends StatelessWidget {
                 BlocBuilder<CowBloc, CowState>(
                   builder: (context, state) {
                     final sickCount = state is CowsLoaded
-                        ? state.cows.where((cow) => cow.sick == true).length
+                        ? state.cows.where((cow) => cow.sick == true && cow.username == userState.user.username).length
                         : 0;
                     return IconWithText(
                       icon: Icons.thermostat,
@@ -110,7 +105,7 @@ class AccountSection extends StatelessWidget {
                   builder: (context, state) {
                     final medicatedCount = state is CowsLoaded
                         ? state.cows
-                            .where((cow) => cow.medicated == true)
+                            .where((cow) => cow.medicated == true && cow.username == userState.user.username)
                             .length
                         : 0;
                     return IconWithText(
@@ -123,7 +118,7 @@ class AccountSection extends StatelessWidget {
                 BlocBuilder<CowBloc, CowState>(
                   builder: (context, state) {
                     final missingCount = state is CowsLoaded
-                        ? state.cows.where((cow) => cow.missing == true).length
+                        ? state.cows.where((cow) => cow.missing == true && cow.username == userState.user.username).length
                         : 0;
                     return IconWithText(
                       icon: Icons.help_outline,
@@ -135,7 +130,7 @@ class AccountSection extends StatelessWidget {
                 BlocBuilder<CowBloc, CowState>(
                   builder: (context, state) {
                     final pregnantCount = state is CowsLoaded
-                        ? state.cows.where((cow) => cow.pregnant == true).length
+                        ? state.cows.where((cow) => cow.pregnant == true && cow.username == userState.user.username).length
                         : 0;
                     return IconWithText(
                       icon: Icons.pregnant_woman,

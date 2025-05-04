@@ -13,6 +13,29 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<GetUserByUsernameEvent>(_onGetUserByUsername);
     on<LoginUserEvent>(_onLoginUser);
     on<LogoutUserEvent>(_onLogoutUser);
+    on<GetAllUserEvent>(_onGetAllUser);
+    on<DeleteUserIdEvent>(_onDeleteUserById);
+  }
+  Future<void> _onDeleteUserById(DeleteUserIdEvent event, Emitter<UserState> emit) async {
+    emit((UserDeleting()));
+    try {
+      int? statusCode = await deleteUserById(event.userId);
+      emit(statusCode == 200 ? UserDeleted(event.userId) : UserError("Failed to delete user"));
+      if(state is UserDeleted){
+        add(GetAllUserEvent());
+      }
+    } catch (e) {
+      emit(UserError(e.toString()));
+    }
+  }
+  Future<void> _onGetAllUser(GetAllUserEvent event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      List<UserModel>? users = await getAllUser();
+      emit(users != null ? UsersLoaded(users) : UserError("No users found"));
+    } catch (e) {
+      emit(UserError(e.toString()));
+    }
   }
   Future<void> _onCreateUser(
       CreateUserEvent event, Emitter<UserState> emit) async {

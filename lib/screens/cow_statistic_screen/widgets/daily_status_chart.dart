@@ -30,7 +30,7 @@ class DailyStatusChart extends StatelessWidget {
           x: i,
           barRods: [
             BarChartRodData(
-              toY: (item['eatingDuration'] ?? 0) / 3600,
+              toY: (item['runningDuration'] ?? 0) / 3600,
               color: Colors.green,
               width: 12,
             ),
@@ -100,7 +100,7 @@ class DailyStatusChart extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _LegendItem(label: 'Eating', color: Colors.green),
+                _LegendItem(label: 'Running', color: Colors.green),
                 SizedBox(width: 16),
                 _LegendItem(label: 'Walking', color: Colors.blue),
                 SizedBox(width: 16),

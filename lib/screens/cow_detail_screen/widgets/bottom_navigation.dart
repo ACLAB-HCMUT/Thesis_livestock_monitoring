@@ -24,7 +24,10 @@ class BottomNavigation extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CowAnalyticsScreen(),
+                    builder: (context) => BlocProvider.value(
+                      value: BlocProvider.of<CowBloc>(context),
+                      child: CowAnalyticsScreen(),
+                    ),
                   ),
                 );
               } else {

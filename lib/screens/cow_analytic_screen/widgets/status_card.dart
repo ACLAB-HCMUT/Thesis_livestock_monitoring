@@ -4,18 +4,18 @@ import 'package:do_an_app/screens/cow_analytic_screen/utils/status_helpers.dart'
 import 'package:flutter/material.dart';
 
 class StatusCard extends StatelessWidget {
-  final CowModel cow;
+  final String? currentStatus;
   final Duration? duration;
-  const StatusCard(this.cow, this.duration, {super.key});
+  const StatusCard(this.currentStatus, this.duration, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final statusColors = {
-      'eating': Colors.green,
+      'running': Colors.green,
       'walking': Colors.blue,
       'idle': Colors.orange,
     };
-    final statusKey = cow.status?.toLowerCase() ?? '';
+    final statusKey =currentStatus;
     final color = statusColors[statusKey] ?? Colors.grey;
     final durationText =
         duration != null ? FormatHelpers.formatDuration(duration!) : '00:00:00';
@@ -45,7 +45,7 @@ class StatusCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  cow.status?.toUpperCase() ?? 'UNKNOWN',
+                  currentStatus!.toUpperCase() ?? 'UNKNOWN',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -60,7 +60,7 @@ class StatusCard extends StatelessWidget {
               children: [
                 Text('Duration: $durationText'),
                 Icon(
-                  StatusHelpers.getStatusIcon(cow.status),
+                  StatusHelpers.getStatusIcon(currentStatus),
                   size: 32,
                   color: color,
                 ),

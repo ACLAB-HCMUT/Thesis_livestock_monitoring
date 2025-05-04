@@ -13,8 +13,8 @@ class StatusDistributionCard extends StatelessWidget {
     statusDurations.forEach((status, duration) {
       totalTime += duration;
     });
-    final eatingPercentage = totalTime.inSeconds > 0
-        ? statusDurations['eating']!.inSeconds / totalTime.inSeconds
+    final runningPercentage = totalTime.inSeconds > 0
+        ? statusDurations['running']!.inSeconds / totalTime.inSeconds
         : 0.0;
     final walkingPercentage = totalTime.inSeconds > 0
         ? statusDurations['walking']!.inSeconds / totalTime.inSeconds
@@ -48,9 +48,9 @@ class StatusDistributionCard extends StatelessWidget {
                           child: CustomPieChart(
                             sections: [
                               PieChartSection(
-                                value: eatingPercentage,
+                                value: runningPercentage,
                                 color: Colors.green,
-                                label: 'Eating',
+                                label: 'Running',
                               ),
                               PieChartSection(
                                 value: walkingPercentage,
@@ -70,11 +70,11 @@ class StatusDistributionCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             LegendItem(
-                              'Eating',
+                              'Running',
                               Colors.green,
                               FormatHelpers.formatDuration(
-                                  statusDurations['eating']!),
-                              eatingPercentage,
+                                  statusDurations['running']!),
+                              runningPercentage,
                             ),
                             LegendItem(
                               'Walking',

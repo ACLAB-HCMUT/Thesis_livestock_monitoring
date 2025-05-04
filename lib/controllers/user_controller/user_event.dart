@@ -20,7 +20,6 @@ class UpdateUserEvent extends UserEvent{
   @override
   List<Object> get props => [userId, username ?? "", fullname ?? "", global_address?? ""];
 }
-
 class CreateUserEvent extends UserEvent {
   final String username;
   final String password;
@@ -43,11 +42,14 @@ class GetUserByUsernameEvent extends UserEvent{
   @override
   List<Object> get props => [username];
 }
-
+class GetAllUserEvent extends UserEvent{
+  GetAllUserEvent();
+  @override
+  List<Object> get props => [];
+}
 class LoginUserEvent extends UserEvent{
   final String username;
   final String password;
-
   LoginUserEvent({required this.username, required this.password});
   @override
   List<Object> get props => [
@@ -55,6 +57,11 @@ class LoginUserEvent extends UserEvent{
   ];
 }
 class LogoutUserEvent extends UserEvent{
-
   LogoutUserEvent();
+}
+class DeleteUserIdEvent extends UserEvent{
+  final String userId;
+  DeleteUserIdEvent(this.userId);
+  @override
+  List<Object> get props => [userId];
 }

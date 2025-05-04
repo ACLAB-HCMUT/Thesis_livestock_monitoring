@@ -18,3 +18,10 @@ class DeleteDeviceIdEvent extends DeviceEvent{
   @override
   List<Object> get props => [DeviceId, username];
 }
+class CreateDeviceEvent extends DeviceEvent{
+  final String username;
+  CreateDeviceEvent(this.username);
+    @override
+  List<Object> get props => [username];
+
+}
