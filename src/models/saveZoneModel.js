@@ -16,7 +16,6 @@ const saveZoneSchema = new mongoose.Schema({
   },
   groupId:{
     type: String,
-    unique : true
   }
 });
 export const SaveZone = mongoose.model("SaveZone", saveZoneSchema);

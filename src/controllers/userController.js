@@ -61,6 +61,20 @@ const getUserByUsername = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+export const getAllUser = async (req, res) => {
+  try {
+    const users = await userService.getAllUser();
+    if (users) {
+      return res.status(200).json(users);
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    return res.status(500).json({ message: "Failed to retrieve user", error });
+  }
+};
+
 const updateByUsername = async (req, res) => {
   try {
     const username = req.body.username;
@@ -98,12 +112,22 @@ export const getAndIncrementGlobalAddress = async (req, res) => {
     });
   }
 };
-
+const deleteUserById = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    await userService.deleteUserById(userId);
+    return res.status(200).json({ result: "Delete success" });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}
 export default {
   registerUser,
   loginUser,
   postUser,
   getUserByUsername,
   updateByUsername,
-  getAndIncrementGlobalAddress
+  getAndIncrementGlobalAddress,
+  getAllUser,
+  deleteUserById
 };

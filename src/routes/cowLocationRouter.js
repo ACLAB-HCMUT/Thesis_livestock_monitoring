@@ -16,7 +16,6 @@ router.get('/cow_id/:cow_id', cowLocationController.getCowLocationsByCowId);
 router.get('/cow_id/:cow_id/:start_date/:end_date', cowLocationController.getCowLocationsByDate);
 /* -------------------------------------- */
 
-
 /* ----------------- Delete ------------- */
 /* Delete cow's location by id */
 router.delete('/:cow_location_id', cowLocationController.deleteCowLocationById);

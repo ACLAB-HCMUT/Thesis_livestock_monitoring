@@ -42,7 +42,7 @@ const cowSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['eating', 'idle', 'walking']
+        enum: ['running', 'idle', 'walking']
     },
     groupId: {
         type: String,
@@ -63,7 +63,7 @@ const statusHistorySchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['eating', 'idle', 'walking'],
+        enum: ['running', 'idle', 'walking'],
         required: true
     },
     startTime: {
@@ -90,7 +90,7 @@ const statusAnalyticsSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    eatingDuration: {
+    runningDuration: {
         type: Number, // Duration in seconds
         default: 0
     },
@@ -179,8 +179,8 @@ async function updateDailyAnalytics(cowId, status, durationSeconds) {
 
     // Update the appropriate duration field
     switch (status) {
-        case 'eating':
-            analytics.eatingDuration += durationSeconds;
+        case 'running':
+            analytics.runningDuration += durationSeconds;
             break;
         case 'walking':
             analytics.walkingDuration += durationSeconds;

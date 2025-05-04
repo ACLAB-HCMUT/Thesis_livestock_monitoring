@@ -1,14 +1,19 @@
 import { SaveZone } from "../models/saveZoneModel.js";
 const createSafeZone = async (safeZoneBody) => {
   const groupId = safeZoneBody.groupId;
-  const existingSafeZone = await SaveZone.findOne({ groupId });
+  const username = safeZoneBody.username;
+  const existingSafeZone = await SaveZone.findOne({
+    groupId: groupId,
+    username: username,
+  });
+  
   if (existingSafeZone) {
     throw new Error("Group ID already exists.");
   }
   const safeZoneData = {
-    'username': safeZoneBody.username,
+    'username': username,
     'safeZone': safeZoneBody.safeZone,
-    'groupId': safeZoneBody.groupId
+    'groupId': groupId
   }
   // console.log(safeZoneData)
   const safeZone = new SaveZone(safeZoneData);

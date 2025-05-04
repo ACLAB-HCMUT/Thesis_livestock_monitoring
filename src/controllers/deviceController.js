@@ -10,6 +10,16 @@ const postDevice = async (req, res) =>{
     }
 }
 
+const deleteDeviceById = async (req, res) => {
+  try {
+    const deviceId = req.body.deviceId;
+    await deviceService.deleteDeviceById(deviceId);
+    return res.status(200).json({ result: "Delete success" });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}
+
 export const getAllDevice = async (req, res) => {
   try {
     const devices = await deviceService.getAllDevice();
@@ -24,7 +34,9 @@ export const getAllDevice = async (req, res) => {
   }
 };
 
+
 export default {
     postDevice,
-    getAllDevice
+    getAllDevice,
+    deleteDeviceById
 };

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -10,13 +11,18 @@ const userSchema = new mongoose.Schema({
   },
   fullname: {
     type: String,
-    require: true
-  }
-  ,
+    required: true
+  },
   global_address: {
     type: Number,
-    require: true,
+    required: true,
     default: 0
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'], // only allows 'user' or 'admin'
+    default: 'user',
+    required: true
   }
 });
 

@@ -88,7 +88,7 @@ const statusAnalyticsSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    eatingDuration: {
+    runningDuration: {
         type: Number, // Duration in seconds
         default: 0
     },

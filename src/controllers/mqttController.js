@@ -39,11 +39,13 @@ const handle_mqtt_msg = async (topic, msg) => {
       data = msg.slice(2);
       split_data = data.split(':');
       cow_id = split_data[0];
-      cow_status = split_data[1];
+      cow_status = parseInt(split_data[1]);
+      // console.log("xxxxxxx", cow_id, cow_status);
       cow_status_str = "idle";
+
       switch(cow_status){
         case 0:
-          cow_status_str = "eating";
+          cow_status_str = "running";
           break;
         case 1:
           cow_status_str = "idle";
@@ -67,7 +69,7 @@ const handle_mqtt_msg = async (topic, msg) => {
       cow_status_str = "idle";
       switch(cow_status){
         case 0:
-          cow_status_str = "eating";
+          cow_status_str = "running";
           break;
         case 1:
           cow_status_str = "idle";

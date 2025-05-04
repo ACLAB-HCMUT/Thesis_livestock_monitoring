@@ -30,7 +30,7 @@ const createCowx = async (req) => {
     const newCow = new CowModel(cowData);
     const savedCow = await newCow.save();
 
-    if (cowData.status && ['eating', 'idle', 'walking'].includes(cowData.status)) {
+    if (cowData.status && ['running', 'idle', 'walking'].includes(cowData.status)) {
         await StatusHistoryModel.create({
             cowId: savedCow._id,
             status: cowData.status,
@@ -241,8 +241,8 @@ async function updateDailyAnalytics(cowId, status, durationSeconds) {
 
             // Update the appropriate duration field for this day
             switch (status) {
-                case 'eating':
-                    analytics.eatingDuration += dayDurationSeconds;
+                case 'running':
+                    analytics.runningDuration += dayDurationSeconds;
                     break;
                 case 'walking':
                     analytics.walkingDuration += dayDurationSeconds;

@@ -1,5 +1,7 @@
+import { CowModel } from "../models/cowModel.js";
+import { DeviceModel } from "../models/deviceModel.js";
+import { SaveZone } from "../models/saveZoneModel.js";
 import { UserModel } from "../models/userModel.js";
-
 const createUser = async (req) => {
   const newUser = new UserModel(req.body);
   const savedUser = await newUser.save();
@@ -13,6 +15,11 @@ const getUserByUsername = async (username) => {
   });
   return user;
 };
+const getAllUser = async () => {
+  const users = await UserModel.find();
+  return users;
+};
+
 const updateByUsername = async (username, updateData) => {
   try {
     const updatedUser = await UserModel.findOneAndUpdate(
@@ -31,6 +38,26 @@ const updateByUsername = async (username, updateData) => {
     throw err;
   }
 };
+const deleteUserById = async (userId) => {
+  const user = await UserModel.findById(userId);
+  if (user) {
+    const username = user.username;
+
+    // Delete the user
+    await user.deleteOne();
+
+    // Delete related documents by username
+    await Promise.all([
+      DeviceModel.deleteMany({ username }),
+      CowModel.deleteMany({ username }),
+      SaveZone.deleteMany({ username })
+    ]);
+    console.log(`Deleted user ${username} and related data.`);
+  }else{
+    console.log("User not found");
+  }
+}
+
 export const incrementGlobalAddress = async (username) => {
   try {
     const updatedUser = await UserModel.findOneAndUpdate(
@@ -52,5 +79,7 @@ export default {
   createUser: createUser,
   getUserByUsername: getUserByUsername,
   updateByUsername,
-  incrementGlobalAddress
+  incrementGlobalAddress,
+  getAllUser,
+  deleteUserById
 };
