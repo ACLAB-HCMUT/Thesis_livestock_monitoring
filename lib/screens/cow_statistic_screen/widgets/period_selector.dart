@@ -33,7 +33,6 @@ class PeriodSelector extends StatelessWidget {
               children: [
                 _periodButton(1, 'Today'),
                 _periodButton(7, 'Week'),
-                _periodButton(30, 'Month'),
               ],
             ),
           ],

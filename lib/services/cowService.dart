@@ -4,7 +4,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CowService {
-  final String _url = 'ws://10.229.63.137:3000';
+  final String _url = 'ws://10.229.26.192:3000';
   WebSocketChannel? _channel;
   final _controller = StreamController<Map<String, dynamic>>();
   Timer? _reconnectTimer;
